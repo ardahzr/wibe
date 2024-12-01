@@ -1,2 +1,58 @@
-<h1>Users#edit</h1>
-<p>Find me in app/views/users/edit.html.erb</p>
+<h2>Edit Profile</h2>
+
+<%= form_for(resource, as: resource_name, url: registration_path(resource_name), html: { method: :put }) do |f| %>
+  <%= render "devise/shared/error_messages", resource: resource %>
+
+  <!-- Email Field -->
+  <div class="field">
+    <%= f.label :email %><br />
+    <%= f.email_field :email, autofocus: true, autocomplete: "email" %>
+  </div>
+
+  <!-- Username Field -->
+  <div class="field">
+    <%= f.label :username %><br />
+    <%= f.text_field :username, value: resource.username %>
+  </div>
+
+  <!-- Status Field -->
+  <div class="field">
+    <%= f.label :status %><br />
+    <%= f.text_area :status, value: resource.status %>
+  </div>
+
+  <!-- Password Field (Optional) -->
+  <div class="field">
+    <%= f.label :password %> <i>(leave blank if you don't want to change it)</i><br />
+    <%= f.password_field :password, autocomplete: "new-password" %>
+    <% if @minimum_password_length %>
+      <small><%= @minimum_password_length %> characters minimum</small>
+    <% end %>
+  </div>
+
+  <!-- Password Confirmation Field -->
+  <div class="field">
+    <%= f.label :password_confirmation %><br />
+    <%= f.password_field :password_confirmation, autocomplete: "new-password" %>
+  </div>
+
+  <!-- Current Password Field (Required for Updates) -->
+  <div class="field">
+    <%= f.label :current_password %> <i>(required to confirm changes)</i><br />
+    <%= f.password_field :current_password, autocomplete: "current-password" %>
+  </div>
+
+  <!-- Submit Button -->
+  <div class="actions">
+    <%= f.submit "Update Profile" %>
+  </div>
+<% end %>
+
+<!-- Cancel Account Section -->
+<h3>Cancel my account</h3>
+<div>
+  <%= button_to "Cancel my account", registration_path(resource_name), 
+                data: { confirm: "Are you sure you want to cancel your account?" }, method: :delete %>
+</div>
+
+<%= link_to "Back", root_path %>

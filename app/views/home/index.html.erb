@@ -1,7 +1,8 @@
-<h1>Welcome to the Social Network</h1>
+<h1>Welcome to the Wibe</h1>
 
 <% if user_signed_in? %>
   <p>Hello, <%= current_user.email %>!</p>
+  <%= link_to 'Profile', profile_path %> | <!-- Profil sayfasına yönlendirme -->
   <%= link_to 'Edit profile', edit_user_registration_path %> |
   <%= link_to 'Logout', destroy_user_session_path, method: :delete, data: { turbo_method: :delete } %>
 <% else %>
