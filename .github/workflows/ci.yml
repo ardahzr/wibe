@@ -84,6 +84,9 @@ jobs:
           ruby-version: .ruby-version
           bundler-cache: true
 
+      - name: Set execute permissions for rails
+        run: chmod +x bin/rails
+        
       - name: Run tests
         env:
           RAILS_ENV: test
