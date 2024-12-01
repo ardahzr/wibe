@@ -1,4 +1,4 @@
-<h1>New Post</h1>
+<h1>Create a New Post</h1>
 
 <%= form_with(model: @post, local: true) do |f| %>
   <% if @post.errors.any? %>
@@ -12,15 +12,23 @@
     </div>
   <% end %>
 
+  <% if flash[:alert].present? %>
+    <div class="alert alert-danger">
+      <%= flash[:alert] %>
+    </div>
+  <% end %>
+
   <div class="field">
-    <%= f.label :content %><br>
-    <%= f.text_area :content %>
+    <%= f.label :content, "Post Content" %><br>
+    <%= f.text_area :content, rows: 5, placeholder: "Write something..." %>
   </div>
 
   <div class="field">
-    <%= f.label :media %><br>
+    <%= f.label :media, "Attach Media (optional)" %><br>
     <%= f.file_field :media, accept: 'image/jpeg,image/png,video/mp4' %>
   </div>
 
-  <%= f.submit 'Create Post' %>
+  <div class="actions">
+    <%= f.submit 'Create Post', class: 'btn btn-primary' %>
+  </div>
 <% end %>
