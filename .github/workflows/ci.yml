@@ -39,7 +39,7 @@ jobs:
           bundler-cache: true
 
       - name: Set execute permissions for importmap audit
-      run: chmod +x bin/importmap
+        run: chmod +x bin/importmap
 
       - name: Scan for security vulnerabilities in JavaScript dependencies
         run: bin/importmap audit
@@ -57,7 +57,7 @@ jobs:
           bundler-cache: true
 
       - name: Set execute permissions for rubocop
-      run: chmod +x bin/rubocop
+        run: chmod +x bin/rubocop
 
       - name: Lint code for consistent style
         run: bin/rubocop -f github
