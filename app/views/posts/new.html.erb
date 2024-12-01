@@ -1,0 +1,26 @@
+<h1>New Post</h1>
+
+<%= form_with(model: @post, local: true) do |f| %>
+  <% if @post.errors.any? %>
+    <div id="error_explanation">
+      <h2><%= pluralize(@post.errors.count, "error") %> prohibited this post from being saved:</h2>
+      <ul>
+        <% @post.errors.full_messages.each do |msg| %>
+          <li><%= msg %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="field">
+    <%= f.label :content %><br>
+    <%= f.text_area :content %>
+  </div>
+
+  <div class="field">
+    <%= f.label :media %><br>
+    <%= f.file_field :media, accept: 'image/jpeg,image/png,video/mp4' %>
+  </div>
+
+  <%= f.submit 'Create Post' %>
+<% end %>

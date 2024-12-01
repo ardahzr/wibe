@@ -23,6 +23,11 @@
   </head>
 
   <body>
+    <nav style="padding: 10px; background-color: #f8f9fa;">
+      <%= link_to "Main Page", root_path, class: "home-link" %>
+      <%= link_to "Posts", posts_path %>
+    </nav>
+
     <%= yield %>
   </body>
 </html>
