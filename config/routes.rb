@@ -1,4 +1,9 @@
 Rails.application.routes.draw do
+  resources :posts
+  get "posts/index"
+  get "posts/show"
+  get "posts/new"
+  get "posts/create"
   devise_for :users
   get "home/index"
   get "users/show"

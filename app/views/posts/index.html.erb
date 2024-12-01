@@ -1,0 +1,18 @@
+<h1>Posts</h1>
+
+<%= link_to 'New Post', new_post_path %>
+
+<% @posts.each do |post| %>
+  <div class="post">
+    <p><strong><%= post.user.username %></strong></p>
+    <p><%= post.content %></p>
+    
+    <% if post.media.attached? %>
+      <% if post.media.content_type.start_with? 'image' %>
+        <%= image_tag post.media %>
+      <% else %>
+        <%= video_tag url_for(post.media), controls: true %>
+      <% end %>
+    <% end %>
+  </div>
+<% end %>
