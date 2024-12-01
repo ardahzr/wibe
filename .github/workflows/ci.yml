@@ -19,9 +19,6 @@ jobs:
           ruby-version: .ruby-version
           bundler-cache: true
 
-      - name: Set execute permissions for brakeman
-        run: chmod +x bin/brakeman
-
       - name: Scan for common Rails security vulnerabilities using static analysis
         run: bin/brakeman --no-pager
 
@@ -52,9 +49,6 @@ jobs:
         with:
           ruby-version: .ruby-version
           bundler-cache: true
-
-      - name: Set execute permissions for rubocop
-        run: chmod +x bin/rubocop
 
       - name: Lint code for consistent style
         run: bin/rubocop -f github
