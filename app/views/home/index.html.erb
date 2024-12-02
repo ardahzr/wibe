@@ -1,11 +1,57 @@
-<h1>Welcome to the Wibe</h1>
 
-<% if user_signed_in? %>
-  <p>Hello, <%= current_user.email %>!</p>
-  <%= link_to 'Profile', profile_path %> | <!-- Profil sayfasına yönlendirme -->
-  <%= link_to 'Edit profile', edit_user_registration_path %> |
-  <%= link_to 'Logout', destroy_user_session_path, method: :delete, data: { turbo_method: :delete } %>
-<% else %>
-  <%= link_to 'Sign up', new_user_registration_path %> |
-  <%= link_to 'Login', new_user_session_path %>
-<% end %>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" 
+      rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js">
+</script>
+
+<div class="container-fluid" style="background: linear-gradient(135deg, #5941ff, #41d1ff);">
+  <div class="row min-vh-100">
+    <!-- Left Side -->
+    <div class="col-md-6 d-flex align-items-center justify-content-center">
+      <div class="text-white p-5">
+        <h1 class="display-3 fw-bold mb-4">Welcome to Wibe</h1>
+        <p class="lead mb-4">Connect with friends and share your moments with the world.</p>
+        
+        <% unless user_signed_in? %>
+          <div class="d-grid gap-3 d-sm-flex">
+            <%= link_to 'Join Wibe', new_user_registration_path, 
+                class: 'btn btn-lg', 
+                style: 'background-color: #8941ff; color: white;' %>
+            <%= link_to 'Sign In', new_user_session_path, 
+                class: 'btn btn-lg btn-outline-light' %>
+          </div>
+        <% end %>
+      </div>
+    </div>
+
+    <!-- Right Side -->
+    <div class="col-md-6 d-flex align-items-center justify-content-center">
+      <% if user_signed_in? %>
+        <div class="card p-4 shadow-lg" style="background-color: rgba(255, 255, 255, 0.9);">
+          <h2 class="mb-4" style="color: #3747b3;">Hello, <%= current_user.username %>!</h2>
+          <div class="d-grid gap-2">
+            <%= link_to 'Create Post', new_post_path, 
+                class: 'btn btn-lg mb-2',
+                style: 'background-color: #5941ff; color: white;' %>
+            <%= link_to 'My Profile', profile_path, 
+                class: 'btn btn-lg mb-2',
+                style: 'background-color: #2e92b3; color: white;' %>
+            <%= link_to 'Edit Profile', edit_user_registration_path, 
+                class: 'btn btn-lg mb-2',
+                style: 'background-color: #8941ff; color: white;' %>
+            <%= link_to 'Logout', destroy_user_session_path, 
+                method: :delete,
+                data: { turbo_method: :delete }, 
+                class: 'btn btn-lg btn-outline-danger' %>
+          </div>
+        </div>
+      <% else %>
+        <div class="text-center">
+          <img src="/assets/social-illustration.svg" alt="Social Network" class="img-fluid" 
+               style="max-width: 400px;">
+        </div>
+      <% end %>
+    </div>
+  </div>
+</div>
+
