@@ -1,14 +1,10 @@
 Rails.application.routes.draw do
+  resources :friendships, only: [:create, :update, :destroy]
   resources :posts
-  get "posts/index"
-  get "posts/show"
-  get "posts/new"
-  get "posts/create"
+  
   devise_for :users
-  get "home/index"
-  get "users/show"
-  get "users/edit"
-  resources :users, only: [:show, :edit, :update]
+  resources :users, only: [:index, :show, :edit, :update]
+  
   get 'profile', to: 'accounts#show', as: :profile
   root to: 'home#index'
 end
