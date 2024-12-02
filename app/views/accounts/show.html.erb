@@ -1,8 +1,54 @@
-<h1>Profil Sayfası</h1>
+<div class="container-fluid" style="background: linear-gradient(135deg, #5941ff, #41d1ff); min-height: 100vh;">
+  <div class="row min-vh-100">
+    <div class="col-md-6 offset-md-3 d-flex align-items-center justify-content-center">
+      <div class="card p-4 shadow-lg" style="background-color: rgba(255, 255, 255, 0.9); width: 100%;">
+        <div class="container mt-5">
+          <!-- User Info -->
+          <div class="d-flex align-items-center mb-4">
+            <% if current_user.avatar.attached? %>
+              <%= image_tag current_user.avatar, class: "rounded-circle me-3", style: "width: 100px; height: 100px; object-fit: cover;" %>
+            <% else %>
+              <div class="rounded-circle bg-secondary me-3" style="width: 100px; height: 100px; display: flex; align-items: center; justify-content: center; color: white;">
+                <span><%= current_user.username[0].upcase %></span>
+              </div>
+            <% end %>
+            <div>
+              <h1 class="fw-bold"><%= current_user.username %></h1>
+              <p class="text-muted"><%= current_user.status.presence || "No bio provided." %></p>
+            </div>
+          </div>
 
-<p><strong>Username:</strong> <%= @user.username %></p>
-<p><strong>Email:</strong> <%= @user.email %></p>
-<p><strong>Status:</strong> <%= @user.status %></p>
+          <hr>
 
-<%= link_to 'Profilimi Düzenle', edit_user_registration_path, class: "btn btn-primary" %>  <!-- Kullanıcı düzenleme sayfasına link -->
-<%= link_to "Back", :back, class: "btn btn-secondary" %>
+          <!-- Posts -->
+          <h3>Your Posts</h3>
+          <div class="row">
+            <% if current_user.posts.any? %>
+              <% current_user.posts.each do |post| %>
+                <div class="col-md-4 mb-4">
+                  <div class="card shadow-sm">
+                    <% if post.media.attached? %>
+                       <%= image_tag post.media.first, class: "card-img-top", style: "height: 200px; object-fit: cover;" %>  <%# Adjust image height as needed %>
+                    <% else %>
+                      <div class="bg-light d-flex align-items-center justify-content-center" style="height: 200px;"> <%# Match height with image %>
+                        <span class="text-muted">No Image</span>
+                      </div>
+                    <% end %>
+                    <div class="card-body">
+                      <h5 class="card-title"><%= post.title %></h5>
+                      <p class="card-text text-muted"><%= truncate(post.content, length: 100) %></p>
+                      <%= link_to 'View Post', post_path(post), class: 'btn btn-primary btn-sm' %>
+                    </div>
+                  </div>
+                </div>
+              <% end %>
+            <% else %>
+              <p class="text-muted">You have no posts yet. <%= link_to 'Create one now!', new_post_path %></p>
+            <% end %>
+          </div>
+          <%= link_to "Edit Profile", edit_user_registration_path, class: "btn btn-lg mb-2", style: "background-color: #8941ff; color: white;" %>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

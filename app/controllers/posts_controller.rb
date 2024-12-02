@@ -60,7 +60,7 @@ class PostsController < ApplicationController
   end
 
   def post_params
-    params.require(:post).permit(:content, media: [])
+    params.require(:post).permit(:title, :content, media: [])
   end
 
   def check_text_with_api(text)
