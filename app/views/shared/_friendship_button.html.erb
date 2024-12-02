@@ -1,0 +1,31 @@
+<% status = current_user.friendship_status_with(user) %>
+
+<% case status %>
+<% when :friends %>
+  <%= button_to "Unfriend", 
+      friendship_path(current_user.find_friendship_with(user)), 
+      method: :delete,
+      class: "btn btn-danger" %>
+<% when :pending_sent %>
+  <%= button_to "Cancel Request", 
+      friendship_path(current_user.friendships.find_by(friend: user)), 
+      method: :delete,
+      class: "btn btn-warning" %>
+<% when :pending_received %>
+  <div class="btn-group">
+    <%= button_to "Accept", 
+        friendship_path(current_user.inverse_friendships.find_by(user: user)), 
+        method: :patch,
+        params: { status: 'accepted' },
+        class: "btn btn-success" %>
+    <%= button_to "Decline", 
+        friendship_path(current_user.inverse_friendships.find_by(user: user)), 
+        method: :delete,
+        class: "btn btn-danger" %>
+  </div>
+<% when :not_friends %>
+  <%= button_to "Add Friend", 
+      friendships_path(friend_id: user.id), 
+      method: :post,
+      class: "btn btn-primary" %>
+<% end %>
