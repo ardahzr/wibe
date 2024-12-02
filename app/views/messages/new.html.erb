@@ -3,7 +3,7 @@
 <%= form_with(model: @message, local: true) do |form| %>
   <div class="field">
     <%= form.label :receiver_id %>
-    <%= form.collection_select :receiver_id, User.all, :id, :email %>
+    <%= form.collection_select :receiver_id, User.all, :id, :username %>
   </div>
 
   <div class="field">

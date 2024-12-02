@@ -5,13 +5,13 @@
       
       <div class="list-group">
         <div class="list-group-item active">
-          Chat with <%= @other_user.email %>
+          Chat with <%= @other_user.username %>
         </div>
         
         <div class="messages-container" style="height: 400px; overflow-y: auto;">
           <% @messages.each do |message| %>
             <div class="list-group-item <%= message.sender == current_user ? 'text-end bg-primary text-white' : 'bg-light' %>">
-              <small class="text-muted"><%= message.sender.email %></small>
+              <small class="text-muted"><%= message.sender.username %></small>
               <p class="mb-1"><%= message.body %></p>
             </div>
           <% end %>

@@ -15,7 +15,7 @@
         <h4 class="list-group-item list-group-item-action active">Conversations</h4>
         <% @users.each do |user| %>
           <%= link_to message_path(user), class: "list-group-item list-group-item-action" do %>
-            <%= user.email %>
+            <%= user.username %>
             <% if @messages.where(sender: user).or(@messages.where(receiver: user)).exists? %>
               <small class="text-muted d-block">
                 <%= @messages.where(sender: user).or(@messages.where(receiver: user)).last.body.truncate(30) %>
@@ -29,7 +29,7 @@
         <%= form_with(model: Message.new, url: messages_path, local: true) do |form| %>
           <div class="mb-3">
             <%= form.label :receiver_id, 'To' %>
-            <%= form.collection_select :receiver_id, @users, :id, :email, {}, { class: 'form-select' } %>
+            <%= form.collection_select :receiver_id, @users, :id, :username, {}, { class: 'form-select' } %>
           </div>
           <div class="mb-3">
             <%= form.label :body, 'Message' %>
