@@ -1,0 +1,24 @@
+<div class="container-fluid" style="background: linear-gradient(135deg, #5941ff, #41d1ff); min-height: 100vh;">
+  <div class="container py-5">
+    <div class="row justify-content-center">
+      <div class="col-md-6">
+        <div class="card shadow-lg" style="background-color: rgba(255, 255, 255, 0.9);">
+          <div class="card-body">
+            <h2 class="card-title mb-4" style="color: #3747b3;">Edit Post</h2>
+            <%= form_for @post, html: { multipart: true } do |f| %>
+              <div class="mb-3">
+                <%= f.text_area :content, class: 'form-control', rows: 4 %>
+              </div>
+              <div class="mb-3">
+                <%= f.file_field :media, multiple: true, class: 'form-control', accept: 'image/*,video/*' %>
+                <small class="text-muted d-block mt-1">Add photos or videos</small>
+              </div>
+              <%= f.submit 'Update', class: 'btn btn-lg w-100', style: 'background-color: #5941ff; color: white;' %>
+            <% end %>
+          </div>
+        </div>
+        <%= link_to 'Back to Posts', posts_path, class: 'btn btn-outline-light mt-3 w-100' %>
+      </div>
+    </div>
+  </div>
+</div>
