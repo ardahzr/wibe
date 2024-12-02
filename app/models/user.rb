@@ -40,7 +40,7 @@ class User < ApplicationRecord
     Friendship.find_by('(user_id = ? AND friend_id = ?) OR (user_id = ? AND friend_id = ?)', 
                       id, user.id, user.id, id)
   end
-  
+  has_one_attached :avatar
   validates :username, presence: true, uniqueness: true
   validates :status, length: { maximum: 500 }
 end
