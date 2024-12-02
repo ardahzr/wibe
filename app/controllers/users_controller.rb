@@ -1,7 +1,7 @@
 class UsersController < ApplicationController
-  def show
-  end
+  before_action :authenticate_user!
 
-  def edit
+  def index
+    @users = User.where.not(id: current_user.id)
   end
 end

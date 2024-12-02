@@ -1,6 +1,6 @@
 class Post < ApplicationRecord
   belongs_to :user
-  has_one_attached :media
+  has_many_attached :media
 
   validate :content_or_media_present
 
