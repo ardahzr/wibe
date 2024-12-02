@@ -1,10 +1,11 @@
 Rails.application.routes.draw do
+  devise_for :users
+  resources :messages, only: [:index, :new, :create, :show]
   resources :posts
   get "posts/index"
   get "posts/show"
   get "posts/new"
   get "posts/create"
-  devise_for :users
   get "home/index"
   get "users/show"
   get "users/edit"
