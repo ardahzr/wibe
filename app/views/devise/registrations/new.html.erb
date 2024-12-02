@@ -1,39 +1,50 @@
-<h2>Sign up</h2>
-
-<%= form_for(resource, as: resource_name, url: registration_path(resource_name)) do |f| %>
-  <%= render "devise/shared/error_messages", resource: resource %>
-
-  <div class="field">
-    <%= f.label :email %><br />
-    <%= f.email_field :email, autofocus: true, autocomplete: "email" %>
-  </div>
-
-  <div class="field">
-    <%= f.label :username %><br />
-    <%= f.text_field :username %>
-  </div>
-
-  <div class="field">
-    <%= f.label :status %><br />
-    <%= f.text_area :status %>
-  </div>
-
-  <div class="field">
-    <%= f.label :password %>
-    <% if @minimum_password_length %>
-    <em>(<%= @minimum_password_length %> characters minimum)</em>
-    <% end %><br />
-    <%= f.password_field :password, autocomplete: "new-password" %>
-  </div>
-
-  <div class="field">
-    <%= f.label :password_confirmation %><br />
-    <%= f.password_field :password_confirmation, autocomplete: "new-password" %>
-  </div>
-
-  <div class="actions">
-    <%= f.submit "Sign up" %>
+<%= render layout: 'devise/shared/auth_layout' do %>
+  <% content_for :show_branding do %>
+    true
+  <% end %>
+  <% content_for :welcome_message do %>
+    Join Us
+  <% end %>
+  <div class="container-fluid" style="background: linear-gradient(135deg, #5941ff, #41d1ff);">
+    <div class="row min-vh-100 d-flex align-items-center justify-content-center">
+      <div class="col-md-6">
+        <div class="p-4" style="background-color: rgba(255, 255, 255, 0.9); width: 100%; max-width: 700px;">
+          <h2 class="text-center mb-4" style="color: #3747b3;">Sign Up for Wibe</h2>
+          <%= form_for(resource, as: resource_name, url: registration_path(resource_name)) do |f| %>
+            <%= render "devise/shared/error_messages", resource: resource %>
+            <div class="mb-3">
+              <%= f.label :email, class: "form-label" %>
+              <%= f.email_field :email, autofocus: true, autocomplete: "email", class: "form-control" %>
+            </div>
+            <div class="mb-3">
+              <%= f.label :username, class: "form-label" %>
+              <%= f.text_field :username, class: "form-control" %>
+            </div>
+            <div class="mb-3">
+              <%= f.label :status, class: "form-label" %>
+              <%= f.text_area :status, class: "form-control" %>
+            </div>
+            <div class="mb-3">
+              <%= f.label :password, class: "form-label" %>
+              <% if @minimum_password_length %>
+                <em>(<%= @minimum_password_length %> characters minimum)</em>
+              <% end %>
+              <%= f.password_field :password, autocomplete: "new-password", class: "form-control" %>
+            </div>
+            <div class="mb-3">
+              <%= f.label :password_confirmation, class: "form-label" %>
+              <%= f.password_field :password_confirmation, autocomplete: "new-password", class: "form-control" %>
+            </div>
+            <div class="d-grid gap-2">
+              <%= f.submit "Sign up", class: "btn btn-lg", style: "background-color: #5941ff; color: white;" %>
+            </div>
+          <% end %>
+          <div class="mt-3 text-center">
+            <%= link_to "Log in", new_user_session_path, class: "btn btn-link" %>
+            <%= link_to "Forgot your password?", new_user_password_path, class: "btn btn-link" %>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 <% end %>
-
-<%= render "devise/shared/links" %>
