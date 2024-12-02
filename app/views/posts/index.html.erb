@@ -1,6 +1,7 @@
 <h1>Posts</h1>
 
-<%= link_to 'New Post', new_post_path %>
+<%= link_to 'New Post', new_post_path, class: 'btn btn-primary' %>
+
 
 <% @posts.each do |post| %>
   <div class="post">
@@ -16,3 +17,5 @@
     <% end %>
   </div>
 <% end %>
+
+<%= link_to 'Back', root_path, class: 'btn btn-secondary' %>  
