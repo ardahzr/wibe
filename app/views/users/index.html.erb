@@ -4,7 +4,7 @@
   <div class="users-list">
     <% @users.each do |user| %>
       <div class="user-card">
-        <span class="user-email"><%= user.email %></span>
+        <span class="user-username"><%= user.username %></span>
         <div class="friendship-actions">
           <%= render 'shared/friendship_button', user: user unless user == current_user %>
         </div>
