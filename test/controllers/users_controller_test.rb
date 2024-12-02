@@ -1,13 +1,21 @@
 require "test_helper"
 
 class UsersControllerTest < ActionDispatch::IntegrationTest
-  test "should get show" do
-    get users_show_url
+  include Devise::Test::IntegrationHelpers
+  
+  setup do
+    @user = users(:one)
+  end
+
+  test "should get show when signed in" do
+    sign_in @user
+    get user_path(@user)
     assert_response :success
   end
 
-  test "should get edit" do
-    get users_edit_url
+  test "should get edit registration when signed in" do
+    sign_in @user
+    get edit_user_registration_path
     assert_response :success
   end
 end
