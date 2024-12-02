@@ -4,4 +4,5 @@
 <p><strong>Email:</strong> <%= @user.email %></p>
 <p><strong>Status:</strong> <%= @user.status %></p>
 
-<%= link_to 'Profilimi Düzenle', edit_user_registration_path %>  <!-- Kullanıcı düzenleme sayfasına link -->
+<%= link_to 'Profilimi Düzenle', edit_user_registration_path, class: "btn btn-primary" %>  <!-- Kullanıcı düzenleme sayfasına link -->
+<%= link_to "Back", :back, class: "btn btn-secondary" %>
