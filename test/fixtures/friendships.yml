@@ -3,9 +3,9 @@
 one:
   user: one
   friend: one
-  status: 1
+  confirmed: false
 
 two:
   user: two
   friend: two
-  status: 1
+  confirmed: true

@@ -32,10 +32,10 @@
             <%= form.collection_select :receiver_id, @users, :id, :username, {}, { class: 'form-select' } %>
           </div>
           <div class="mb-3">
-            <%= form.label :body, 'Message' %>
+            <%= form.label :body %>
             <%= form.text_area :body, class: 'form-control' %>
           </div>
-          <%= form.submit 'Send Message', class: 'btn btn-primary' %>
+          <%= form.submit 'Send', class: 'btn btn-primary' %>
         <% end %>
       </div>
     </div>
