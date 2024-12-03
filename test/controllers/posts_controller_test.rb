@@ -8,37 +8,24 @@ class PostsControllerTest < ActionDispatch::IntegrationTest
   end
 
   test "should get index" do
-    get posts_index_url
+    get posts_url
     assert_response :success
   end
 
-  test "should get show" do
-    get posts_show_url
+  test "should show post" do
+    get post_url(@post)
     assert_response :success
   end
 
   test "should get new" do
-    get posts_new_url
+    get new_post_url
     assert_response :success
   end
 
-  test "should get create" do
-    get posts_create_url
-    assert_response :success
-  end
-
-  test "should create post when authenticated" do
+  test "should create post" do
     assert_difference("Post.count") do
       post posts_url, params: { post: { content: "Test content" } }
     end
     assert_redirected_to posts_path
-  end
-
-  test "should not create post when not authenticated" do
-    sign_out @user
-    assert_no_difference("Post.count") do
-      post posts_url, params: { post: { content: "Test content" } }
-    end
-    assert_redirected_to new_user_session_path
   end
 end

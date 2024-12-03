@@ -1,9 +1,11 @@
 class User < ApplicationRecord
-  # Include default devise modules. Others available are:
-  # :confirmable, :lockable, :timeoutable, :trackable and :omniauthable
+  
   devise :database_authenticatable, :registerable,
          :recoverable, :rememberable, :validatable
 
+  has_many :sent_messages, class_name: 'Message', foreign_key: 'sender_id'
+  has_many :received_messages, class_name: 'Message', foreign_key: 'receiver_id'
+  
   has_many :posts, dependent: :destroy
   
   has_many :friendships
@@ -38,7 +40,7 @@ class User < ApplicationRecord
     Friendship.find_by('(user_id = ? AND friend_id = ?) OR (user_id = ? AND friend_id = ?)', 
                       id, user.id, user.id, id)
   end
-  
+  has_one_attached :avatar
   validates :username, presence: true, uniqueness: true
   validates :status, length: { maximum: 500 }
 end

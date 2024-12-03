@@ -24,6 +24,11 @@
               <%= f.label :status, class: "form-label" %>
               <%= f.text_area :status, class: "form-control" %>
             </div>
+            <div class="field">
+              <%= f.label :avatar %>
+              <%= f.file_field :avatar %>
+            </div>
+
             <div class="mb-3">
               <%= f.label :password, class: "form-label" %>
               <% if @minimum_password_length %>

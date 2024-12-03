@@ -1,11 +1,11 @@
 # Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
 
 one:
-  user: one
-  friend: one
-  confirmed: false
+  sender_id: 1
+  receiver_id: 1
+  body: MyText
 
 two:
-  user: two
-  friend: two
-  confirmed: true
+  sender_id: 1
+  receiver_id: 1
+  body: MyText

@@ -10,7 +10,7 @@
             <!-- Email Field -->
             <div class="mb-3">
               <%= f.label :email, class: "form-label" %>
-              <%= f.email_field :email, autofocus: true, autocomplete: "email", class: "form-control" %>
+              <%= f.email_field :email, autofocus: true, autocomplete: "email", class: "form-control", value: resource.email %>
             </div>
 
             <% if devise_mapping.confirmable? && resource.pending_reconfirmation? %>
@@ -22,13 +22,24 @@
             <!-- Username Field -->
             <div class="mb-3">
               <%= f.label :username, "Username", class: "form-label" %>
-              <%= f.text_field :username, class: "form-control" %>
+              <%= f.text_field :username, class: "form-control", value: resource.username %>
             </div>
 
             <!-- Status Field -->
             <div class="mb-3">
               <%= f.label :status, "Status", class: "form-label" %>
-              <%= f.text_area :status, class: "form-control" %>
+              <%= f.text_area :status, class: "form-control", value: resource.status %>
+            </div>
+
+            <!-- Avatar Field -->
+            <div class="field mb-3">
+              <%= f.label :avatar, "Profile Picture", class: "form-label" %>
+              <%= f.file_field :avatar, class: "form-control" %>
+              <% if resource.avatar.attached? %>
+                <div class="mt-2">
+                  <%= image_tag resource.avatar, class: "rounded-circle", style: "width: 100px; height: 100px; object-fit: cover;" %>
+                </div>
+              <% end %>
             </div>
 
             <!-- Password Fields -->

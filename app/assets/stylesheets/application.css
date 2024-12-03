@@ -8,3 +8,35 @@
  *
  * Consider organizing styles into separate files for maintainability.
  */
+
+.message {
+  margin-bottom: 10px;
+}
+
+.message strong {
+  display: block;
+  margin-bottom: 5px;
+}
+
+.message p {
+  margin: 0;
+}
+
+.messages-container .list-group-item {
+  border-radius: 15px;
+  margin-bottom: 10px;
+  max-width: 75%;
+}
+
+.messages-container .text-end {
+  margin-left: auto;
+}
+
+.messages-container .bg-primary {
+  background-color: #007bff !important;
+  color: white;
+}
+
+.messages-container .bg-light {
+  background-color: #f8f9fa !important;
+}
