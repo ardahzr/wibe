@@ -1,7 +1,10 @@
 Rails.application.routes.draw do
   resources :friendships, only: [:create, :update, :destroy]
   devise_for :users
-  resources :posts
+  resources :posts do
+    post 'like', on: :member
+    post 'unlike', on: :member
+  end
   resources :messages, only: [:index, :new, :create, :show]
   resources :users, only: [:index, :show, :edit, :update]
   resources :users, only: [:show, :edit, :update]

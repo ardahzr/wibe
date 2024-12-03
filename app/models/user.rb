@@ -43,4 +43,6 @@ class User < ApplicationRecord
   has_one_attached :avatar
   validates :username, presence: true, uniqueness: true
   validates :status, length: { maximum: 500 }
+  has_many :posts
+  has_many :likes
 end
