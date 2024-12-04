@@ -9,6 +9,11 @@
  * Consider organizing styles into separate files for maintainability.
  */
 
+body, html {
+  height: 100%;
+  margin: 0;
+}
+
 .message {
   margin-bottom: 10px;
 }
@@ -39,4 +44,20 @@
 
 .messages-container .bg-light {
   background-color: #f8f9fa !important;
+}
+
+.list-group-item {
+  cursor: pointer;
+}
+
+#messages {
+  background-color: #f9f9f9;
+}
+
+#messages .message {
+  margin-bottom: 15px;
+}
+
+#messages .message.sent {
+  text-align: right;
 }

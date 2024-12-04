@@ -43,4 +43,8 @@ class User < ApplicationRecord
   has_one_attached :avatar
   validates :username, presence: true, uniqueness: true
   validates :status, length: { maximum: 500 }
+
+  def avatar_url
+    self[:avatar_url] || 'default_avatar.png'
+  end
 end

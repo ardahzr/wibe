@@ -1,0 +1,9 @@
+<% @conversation_messages.each do |message| %>
+  <div class="message <%= message.sender == current_user ? 'sent' : 'received' %>">
+    <div class="p-2 bg-white rounded shadow-sm d-inline-block">
+      <%= message.body %>
+      <br>
+      <small class="text-muted"><%= message.created_at.strftime("%H:%M") %></small>
+    </div>
+  </div>
+<% end %>
