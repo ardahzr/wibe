@@ -36,6 +36,8 @@
             <%= link_to 'Latest Posts', posts_path, 
                 class: 'btn btn-lg mb-2',
                 style: 'background-color: #5941ff; color: white;' %>
+            <%= link_to 'Direct Messages', messages_path, 
+                class: 'btn btn-lg btn-outline-primary' %>
             <%= link_to 'My Profile', profile_path, 
                 class: 'btn btn-lg mb-2',
                 style: 'background-color: #2e92b3; color: white;' %>
@@ -46,8 +48,6 @@
                 method: :delete,
                 data: { turbo_method: :delete }, 
                 class: 'btn btn-lg btn-outline-danger' %>
-            <%= link_to 'Direct Messages', messages_path, 
-                class: 'btn btn-lg btn-outline-primary' %>
           </div>
         </div>
       <% else %>

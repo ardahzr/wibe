@@ -1,41 +1,68 @@
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
-<div class="container mt-5">
-  <div class="row">
-    <!-- Back to Home Button -->
-    <div class="col-12 mb-3">
-      <%= link_to 'Back to Home', root_path, class: 'btn btn-secondary' %>
-    </div>
-  </div>
-  <div class="row">
-    <!-- Conversations -->
-    <div class="col-12">
-      <div class="list-group">
-        <h4 class="list-group-item list-group-item-action active">Conversations</h4>
+<div class="container-fluid">
+  <div class="row vh-100">
+    <!-- DM List -->
+    <div class="col-12 col-md-4 p-0 border-end">
+      <div class="list-group list-group-flush overflow-auto" style="height: 100%;">
+        <h5 class="list-group-item d-flex justify-content-between align-items-center">
+          DMs
+          <div>
+            <button class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#newMessageModal">New Message</button>
+            <%= link_to 'Home Page', root_path, class: 'btn btn-secondary btn-sm ms-2' %>
+          </div>
+        </h5>
         <% @users.each do |user| %>
-          <%= link_to message_path(user), class: "list-group-item list-group-item-action" do %>
-            <%= user.username %>
-            <% if @messages.where(sender: user).or(@messages.where(receiver: user)).exists? %>
-              <small class="text-muted d-block">
-                <%= @messages.where(sender: user).or(@messages.where(receiver: user)).last.body.truncate(30) %>
-              </small>
-            <% end %>
+          <%= link_to message_path(user), remote: true, class: "list-group-item list-group-item-action" do %>
+            <div class="d-flex align-items-center">
+              <!-- User Avatar -->
+              <!-- <img src="<%= user.avatar_url || asset_path('default_avatar.png') %>" class="rounded-circle me-2" width="40" height="40" alt="Avatar"> -->
+              <div>
+                <strong><%= user.username %></strong><br>
+                <small class="text-muted">
+                  <% last_message = @messages.where(sender: user).or(@messages.where(receiver: user)).last %>
+                  <%= last_message.present? ? last_message.body.truncate(30) : 'New Message' %>
+                </small>
+              </div>
+            </div>
           <% end %>
         <% end %>
       </div>
-      <div class="mt-4">
-        <h5>New Message</h5>
-        <%= form_with(model: Message.new, url: messages_path, local: true) do |form| %>
+    </div>
+
+    <!-- DM Zone -->
+    <div class="col-12 col-md-8 d-flex flex-column p-0">
+      <!-- Placeholder for the conversation -->
+      <div id="conversation" class="flex-grow-1 overflow-auto p-3">
+        <!-- Conversation will load here -->
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- New Message Modal -->
+<div class="modal fade" id="newMessageModal" tabindex="-1" aria-labelledby="newMessageModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="newMessageModalLabel">New Message</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <%= form_with(model: Message.new, url: messages_path, remote: true) do |form| %>
           <div class="mb-3">
-            <%= form.label :receiver_id, 'To' %>
-            <%= form.collection_select :receiver_id, @users, :id, :username, {}, { class: 'form-select' } %>
+            <%= form.label :receiver_id, "Recipient" %>
+            <%= form.collection_select :receiver_id, @users, :id, :username, { prompt: "Select a user" }, { class: "form-select" } %>
           </div>
           <div class="mb-3">
-            <%= form.label :body %>
-            <%= form.text_area :body, class: 'form-control' %>
+            <%= form.label :body, "Message" %>
+            <%= form.text_area :body, class: "form-control", rows: 3, placeholder: "Type your message..." %>
           </div>
-          <%= form.submit 'Send', class: 'btn btn-primary' %>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            <button type="submit" class="btn btn-primary">Send</button>
+          </div>
         <% end %>
       </div>
     </div>
