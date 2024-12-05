@@ -1,4 +1,4 @@
-document.addEventListener("turbolinks:load", function() {
+document.addEventListener("DOMContentLoaded", function() {
   document.querySelectorAll(".list-group-item-action").forEach(function(element) {
     element.addEventListener("click", function(event) {
       event.preventDefault();
@@ -6,6 +6,7 @@ document.addEventListener("turbolinks:load", function() {
       
       fetch(url, {
         headers: {
+          "Accept": "text/javascript",
           "X-Requested-With": "XMLHttpRequest",
           "X-CSRF-Token": document.querySelector('meta[name="csrf-token"]').getAttribute('content')
         },
@@ -14,6 +15,9 @@ document.addEventListener("turbolinks:load", function() {
       .then(response => response.text())
       .then(data => {
         eval(data);
+      })
+      .catch(error => {
+        console.error('Error:', error);
       });
     });
   });

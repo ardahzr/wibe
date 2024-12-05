@@ -44,10 +44,16 @@
             <%= link_to 'Edit Profile', edit_user_registration_path, 
                 class: 'btn btn-lg mb-2',
                 style: 'background-color: #8941ff; color: white;' %>
-            <%= link_to 'Logout', destroy_user_session_path, 
+            <%= button_to 'Logout', 
+                destroy_user_session_path,
                 method: :delete,
-                data: { turbo_method: :delete }, 
-                class: 'btn btn-lg btn-outline-danger' %>
+                class: 'btn btn-lg mb-2 w-100',
+                style: 'background-color: #dc3545; color: white;',
+                form: { 
+                  data: { turbo: false },
+                  style: 'width: 100%;'
+                },
+                data: { confirm: 'Are you sure?' } %>
           </div>
         </div>
       <% else %>
