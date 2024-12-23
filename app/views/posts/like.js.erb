@@ -1,0 +1,4 @@
+document.getElementById("like-actions-<%= @post.id %>").innerHTML = `
+  <%= j render partial: "posts/like_button", locals: { post: @post } %>
+`;
+document.getElementById("like-count-<%= @post.id %>").innerText = "<%= @post.likes.count %> Likes";
