@@ -49,19 +49,29 @@ class PostsController < ApplicationController
     redirect_to posts_path, notice: 'Post was successfully deleted.'
   end
 
+  before_action :find_post, only: [:like, :unlike]
+
   def like
-    # Check if the user has already liked the post
-    unless @post.liked_by?(current_user)
-      @post.likes.create(user: current_user)
+    @post.likes.create(user: current_user)
+    respond_to do |format|
+      format.js   
+      format.html { redirect_to posts_path } 
     end
-    redirect_to posts_path
   end
 
   def unlike
-    # Find the like and destroy it
-    @like = @post.likes.find_by(user: current_user)
-    @like.destroy if @like
-    redirect_to posts_path
+    like = @post.likes.find_by(user: current_user)
+    like.destroy if like
+    respond_to do |format|
+      format.js   
+      format.html { redirect_to posts_path } 
+    end
+  end
+
+  private
+
+  def find_post
+    @post = Post.find(params[:id])
   end
 
   private
