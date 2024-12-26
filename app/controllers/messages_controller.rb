@@ -5,6 +5,9 @@ class MessagesController < ApplicationController
     friend_ids = current_user.friends.pluck(:id)
     @users = User.where(id: friend_ids)
     @messages = Message.where(sender: current_user).or(Message.where(receiver: current_user)).order(created_at: :desc)
+    @last_messages = @users.map do |user|
+      Message.where("(sender_id = :user_id AND receiver_id = :current_user_id) OR (sender_id = :current_user_id AND receiver_id = :user_id)", user_id: user.id, current_user_id: current_user.id).order(created_at: :desc).first
+    end
   end
 
   def show
