@@ -1,0 +1,58 @@
+var messagesContainer = document.querySelector('.messages-container');
+var newMessage = `
+  <div class="message text-end mb-3">
+    <% if @message.image? %>
+      <div class="d-flex flex-column align-items-end">
+        <% if @message.body.present? %>
+          <div class="bg-primary text-white d-inline-block p-2 rounded-3 mb-2">
+            <%= j @message.body %>
+          </div>
+        <% end %>
+        <%= image_tag(url_for(@message.attachment), class: 'img-fluid rounded message-image', style: 'max-width: 300px') %>
+        <div class="text-muted small mt-1"><%= message_time_format(@message.created_at) %></div>
+      </div>
+    <% else %>
+      <div class="bg-primary text-white d-inline-block p-2 rounded-3">
+        <% if @message.body.present? %>
+          <div class="mb-2"><%= j @message.body %></div>
+        <% end %>
+        <% if @message.attachment.attached? && !@message.image? %>
+          <div class="mt-2">
+            <a href="<%= url_for(@message.attachment) %>" class="text-white" target="_blank">
+              <i class="bi bi-file-earmark"></i> <%= @message.attachment.filename %>
+            </a>
+          </div>
+        <% end %>
+        <small class="d-block text-muted"><%= message_time_format(@message.created_at) %></small>
+      </div>
+    <% end %>
+  </div>
+`;
+
+messagesContainer.insertAdjacentHTML('beforeend', newMessage);
+messagesContainer.scrollTop = messagesContainer.scrollHeight;
+
+// Update sidebar last message
+var sidebarItem = document.querySelector(`a[href="/messages/<%= @other_user.id %>"]`);
+if (sidebarItem) {
+  var lastMessageElement = sidebarItem.querySelector('small.text-muted');
+  if (lastMessageElement) {
+    var messagePreview = '';
+    <% if @message.attachment.attached? %>
+      <% if @message.image? %>
+        messagePreview = 'Sent an image';
+      <% else %>
+        messagePreview = 'Sent a file: <%= j @message.attachment.filename.to_s %>';
+      <% end %>
+      <% if @message.body.present? %>
+        messagePreview += ' • <%= j @message.body.truncate(20) %>';
+      <% end %>
+    <% else %>
+      messagePreview = '<%= j @message.body.truncate(30) %>';
+    <% end %>
+    lastMessageElement.textContent = `You: ${messagePreview} • just now`;
+  }
+}
+
+// Clear input field
+document.querySelector('#message-form-<%= @other_user.id %>').reset();
