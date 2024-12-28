@@ -27,6 +27,31 @@ body, html {
   margin: 0;
 }
 
+.message .attachment-preview {
+  max-width: 200px;
+  margin-top: 8px;
+}
+
+.message .file-attachment {
+  display: inline-block;
+  padding: 4px 8px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 4px;
+  margin-top: 4px;
+}
+
+.message-image {
+  border-radius: 12px;
+  max-height: 400px;
+  object-fit: cover;
+}
+
+.message .time-stamp {
+  font-size: 0.75rem;
+  color: #6c757d;
+  margin-top: 4px;
+}
+
 .messages-container .list-group-item {
   border-radius: 15px;
   margin-bottom: 10px;
@@ -60,4 +85,11 @@ body, html {
 
 #messages .message.sent {
   text-align: right;
+}
+
+.file-preview {
+  background: #f8f9fa;
+  padding: 4px 8px;
+  border-radius: 4px;
+  margin-top: 4px;
 }
