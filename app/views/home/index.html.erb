@@ -16,7 +16,7 @@
             <%= link_to 'Join Wibe', new_user_registration_path, 
                 class: 'btn btn-lg', 
                 style: 'background-color: #8941ff; color: white;' %>
-            <%= link_to 'Sign In', new_user_session_path, 
+            <%= link_to 'Log in', new_user_session_path, 
                 class: 'btn btn-lg btn-outline-light' %>
           </div>
         <% end %>
@@ -58,8 +58,7 @@
         </div>
       <% else %>
         <div class="text-center">
-           <img src="file:///C:/Users/Vefa/Desktop/wibe%202/app/assets/images/wibelogo.png" alt="Wibe Logo_1" class="img-fluid" 
-             style="max-width: 400px;">
+          <img src="<%= asset_path('wibelogo.png') %>" alt="Wibe Logo" class="img-fluid" style="max-width: 400px;">
         </div>
       <% end %>
     </div>
