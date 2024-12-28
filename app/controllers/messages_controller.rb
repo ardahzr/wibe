@@ -35,16 +35,22 @@ class MessagesController < ApplicationController
 
   def create
     @message = current_user.sent_messages.build(message_params)
-    if @message.save
-      redirect_to messages_path, notice: 'Message was sent successfully.'
-    else
-      redirect_to messages_path, alert: 'Message could not be sent.'
+    @other_user = User.find(message_params[:receiver_id])
+
+    respond_to do |format|
+      if @message.save
+        format.html { redirect_to message_path(@other_user) }
+        format.js   # Will use create.js.erb for JavaScript response
+      else
+        format.html { redirect_to message_path(@other_user), alert: 'Message could not be sent.' }
+        format.js { render js: "alert('#{@message.errors.full_messages.join(', ')}');" }
+      end
     end
   end
 
   private
 
   def message_params
-    params.require(:message).permit(:receiver_id, :body)
+    params.require(:message).permit(:receiver_id, :body, :attachment)
   end
 end

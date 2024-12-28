@@ -13,7 +13,7 @@
           </div>
         </h5>
         <% @users.each_with_index do |user, index| %>
-          <%= link_to message_path(user), remote: true, class: "list-group-item list-group-item-action" do %>
+          <%= link_to message_path(user), remote: true, class: "list-group-item list-group-item-action", id: "user-chat-#{user.id}" do %>
             <div class="d-flex align-items-center">
               <!-- User Avatar -->
               <!-- <img src="<%= user.avatar_url || asset_path('default_avatar.png') %>" class="rounded-circle me-2" width="40" height="40" alt="Avatar"> -->
@@ -23,7 +23,19 @@
                   <% last_message = @last_messages[index] %>
                   <% if last_message.present? %>
                     <%= last_message.sender == current_user ? 'You: ' : "#{last_message.sender.username}: " %>
-                    <%= last_message.body.truncate(30) %>
+                    <% if last_message.attachment.attached? %>
+                      <% if last_message.image? %>
+                        Sent an image
+                      <% else %>
+                        Sent a file: <%= last_message.attachment.filename.truncate(20) %>
+                      <% end %>
+                      <% if last_message.body.present? %>
+                        • <%= last_message.body.truncate(20) %>
+                      <% end %>
+                    <% else %>
+                      <%= last_message.body.truncate(30) %>
+                    <% end %>
+                    • <%= message_time_format(last_message.created_at) %>
                   <% else %>
                     Start a conversation
                   <% end %>

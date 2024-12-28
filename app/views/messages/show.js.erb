@@ -6,23 +6,187 @@ document.getElementById('conversation').innerHTML = `
   <div class="messages-container p-3" style="height: calc(100vh - 200px); overflow-y: auto;">
     <% @messages.each do |message| %>
       <div class="message <%= message.sender == current_user ? 'text-end' : '' %> mb-3">
-        <div class="<%= message.sender == current_user ? 'bg-primary text-white' : 'bg-light' %> d-inline-block p-2 rounded-3">
-          <%= message.body %>
-          <small class="d-block text-muted"><%= message.created_at.strftime("%H:%M") %></small>
-        </div>
+        <% if message.image? %>
+          <div class="d-flex flex-column <%= message.sender == current_user ? 'align-items-end' : '' %>">
+            <% if message.body.present? %>
+              <div class="<%= message.sender == current_user ? 'bg-primary text-white' : 'bg-light' %> d-inline-block p-2 rounded-3 mb-2">
+                <%= message.body %>
+              </div>
+            <% end %>
+            <%= image_tag(url_for(message.attachment), class: 'img-fluid rounded message-image', style: 'max-width: 300px') %>
+            <div class="text-muted small mt-1"><%= message_time_format(message.created_at) %></div>
+          </div>
+        <% else %>
+          <div class="<%= message.sender == current_user ? 'bg-primary text-white' : 'bg-light' %> d-inline-block p-2 rounded-3">
+            <% if message.body.present? %>
+              <div class="mb-2"><%= message.body %></div>
+            <% end %>
+            <% if message.attachment.attached? && !message.image? %>
+              <div class="mt-2">
+                <a href="<%= url_for(message.attachment) %>" class="<%= message.sender == current_user ? 'text-white' : 'text-dark' %>" target="_blank">
+                  <i class="bi bi-file-earmark"></i> <%= message.attachment.filename %>
+                </a>
+              </div>
+            <% end %>
+            <small class="d-block text-muted">
+              <%= message_time_format(message.created_at) %>
+            </small>
+          </div>
+        <% end %>
       </div>
     <% end %>
   </div>
 
   <div class="chat-input border-top p-3">
-    <%= form_with(model: Message.new, remote: true) do |f| %>
+    <%= form_with(model: Message.new, local: false, multipart: true, class: 'message-form', id: "message-form-#{@other_user.id}") do |f| %>
       <div class="input-group">
         <%= f.hidden_field :receiver_id, value: @other_user.id %>
-        <%= f.text_field :body, class: "form-control", placeholder: "Type a message..." %>
+        <%= f.text_field :body, class: "form-control message-input", placeholder: "Type a message...", autocomplete: 'off' %>
+        <label class="btn btn-outline-secondary d-flex align-items-center">
+          <i class="bi bi-paperclip fs-5"></i>
+          <%= f.file_field :attachment, class: 'd-none', accept: 'image/*,application/pdf,.doc,.docx,.xls,.xlsx' %>
+        </label>
         <%= f.submit "Send", class: "btn btn-primary" %>
+      </div>
+      <div id="file-preview" class="mt-2 d-none">
+        <div class="d-flex align-items-center gap-2">
+          <img id="image-preview" class="d-none" style="max-height: 100px; max-width: 100px;">
+          <div>
+            <small class="text-muted file-name"></small>
+            <button type="button" class="btn btn-sm btn-link text-danger p-0 ms-2" onclick="removeFilePreview()">
+              <i class="bi bi-x-circle"></i> Remove
+            </button>
+          </div>
+        </div>
       </div>
     <% end %>
   </div>
 `;
+
+// Define functions in global scope
+window.removeFilePreview = function() {
+  const messageForm = document.querySelector('#message-form-<%= @other_user.id %>');
+  if (!messageForm) return;
+
+  const fileInput = messageForm.querySelector('input[type="file"]');
+  const previewDiv = messageForm.querySelector('#file-preview');
+  const imagePreview = messageForm.querySelector('#image-preview');
+  const fileName = messageForm.querySelector('.file-name');
+
+  if (fileInput) {
+    fileInput.value = '';
+    // Clear the files property and recreate the input
+    const newFileInput = document.createElement('input');
+    newFileInput.type = 'file';
+    newFileInput.className = fileInput.className;
+    newFileInput.accept = fileInput.accept;
+    newFileInput.setAttribute('data-action', fileInput.getAttribute('data-action'));
+    fileInput.parentNode.replaceChild(newFileInput, fileInput);
+    
+    // Add the change event listener to the new input
+    newFileInput.addEventListener('change', window.handleFileSelect);
+  }
+  
+  if (previewDiv) previewDiv.classList.add('d-none');
+  if (imagePreview) {
+    imagePreview.classList.add('d-none');
+    imagePreview.src = '';
+  }
+  if (fileName) fileName.textContent = '';
+};
+
+window.handleFileSelect = function(e) {
+  const file = this.files[0];
+  const form = this.closest('form');
+  const previewDiv = form.querySelector('#file-preview');
+  const imagePreview = previewDiv.querySelector('#image-preview');
+  const fileName = previewDiv.querySelector('.file-name');
+
+  if (file) {
+    previewDiv.classList.remove('d-none');
+    fileName.textContent = file.name;
+    
+    if (file.type.startsWith('image/')) {
+      imagePreview.classList.remove('d-none');
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        imagePreview.src = e.target.result;
+      };
+      reader.readAsDataURL(file);
+    } else {
+      imagePreview.classList.add('d-none');
+    }
+  }
+};
+
+// Update file input event listener
+document.querySelector('#message-form-<%= @other_user.id %> input[type="file"]')
+  .addEventListener('change', window.handleFileSelect);
+
+// Add keydown event listener to document
+document.addEventListener('keydown', function(e) {
+  const messageForm = document.querySelector('#message-form-<%= @other_user.id %>');
+  if (!messageForm) return;
+
+  // Check if the active element is not a textarea or contenteditable div
+  if (e.key === 'Enter' && 
+      !e.shiftKey && 
+      !(document.activeElement.tagName === 'TEXTAREA' || 
+        document.activeElement.getAttribute('contenteditable'))) {
+    e.preventDefault();
+    messageForm.dispatchEvent(new Event('submit'));
+  }
+});
+
+// Update form submission
+const messageForm = document.querySelector('#message-form-<%= @other_user.id %>');
+messageForm.addEventListener('submit', function(e) {
+  e.preventDefault();
+  
+  const formData = new FormData(this);
+  const submitButton = this.querySelector('input[type="submit"]');
+  const fileInput = this.querySelector('input[type="file"]');
+  const messageInput = this.querySelector('.message-input');
+  
+  // Validate form before submission
+  if (!fileInput.files.length && !messageInput.value.trim()) {
+    alert('Please enter a message or attach a file');
+    return;
+  }
+
+  // Ensure file is included in formData if selected
+  if (fileInput.files.length > 0) {
+    formData.set('message[attachment]', fileInput.files[0]);
+  }
+
+  submitButton.disabled = true;
+  
+  fetch(this.action, {
+    method: 'POST',
+    body: formData,
+    headers: {
+      'X-Requested-With': 'XMLHttpRequest',
+      'Accept': 'text/javascript'
+      // Remove Content-Type header to let browser set it with boundary for multipart/form-data
+    },
+    credentials: 'same-origin'
+  })
+  .then(response => response.text())
+  .then(html => {
+    submitButton.disabled = false;
+    if (html.includes('alert')) {
+      eval(html);
+    } else {
+      eval(html);
+      removeFilePreview();
+      messageInput.value = '';
+      messageInput.focus();
+    }
+  })
+  .catch(error => {
+    submitButton.disabled = false;
+    console.error('Error:', error);
+  });
+});
 
 document.querySelector('.messages-container').scrollTop = document.querySelector('.messages-container').scrollHeight;
