@@ -5,32 +5,49 @@ document.getElementById('conversation').innerHTML = `
   
   <div class="messages-container p-3" style="height: calc(100vh - 200px); overflow-y: auto;">
     <% @messages.each do |message| %>
-      <div class="message <%= message.sender == current_user ? 'text-end' : '' %> mb-3">
+      <div class="message <%= message.sender == current_user ? 'text-end' : '' %> mb-3" 
+           id="message-<%= message.id %>"
+           <%= 'data-owner="true"' if message.sender == current_user %>
+           oncontextmenu="handleContextMenu(event, <%= message.id %>, <%= message.sender == current_user %>); return false;">
         <% if message.image? %>
           <div class="d-flex flex-column <%= message.sender == current_user ? 'align-items-end' : '' %>">
-            <% if message.body.present? %>
-              <div class="<%= message.sender == current_user ? 'bg-primary text-white' : 'bg-light' %> d-inline-block p-2 rounded-3 mb-2">
-                <%= message.body %>
-              </div>
-            <% end %>
-            <%= image_tag(url_for(message.attachment), class: 'img-fluid rounded message-image', style: 'max-width: 300px') %>
-            <div class="text-muted small mt-1"><%= message_time_format(message.created_at) %></div>
+            <div class="position-relative">
+              <% if message.sender == current_user %>
+                <button onclick="deleteMessage(<%= message.id %>)" class="btn btn-sm btn-link text-danger position-absolute top-0 start-0 p-0" style="margin-left: -25px;">
+                  <i class="bi bi-trash"></i>
+                </button>
+              <% end %>
+              <% if message.body.present? %>
+                <div class="<%= message.sender == current_user ? 'bg-primary text-white' : 'bg-light' %> d-inline-block p-2 rounded-3 mb-2 message-content">
+                  <%= message.body %>
+                </div>
+              <% end %>
+              <%= image_tag(url_for(message.attachment), class: 'img-fluid rounded message-image', style: 'max-width: 300px') %>
+              <div class="text-muted small mt-1"><%= message_time_format(message.created_at) %></div>
+            </div>
           </div>
         <% else %>
-          <div class="<%= message.sender == current_user ? 'bg-primary text-white' : 'bg-light' %> d-inline-block p-2 rounded-3">
-            <% if message.body.present? %>
-              <div class="mb-2"><%= message.body %></div>
+          <div class="position-relative">
+            <% if message.sender == current_user %>
+              <button onclick="deleteMessage(<%= message.id %>)" class="btn btn-sm btn-link text-danger position-absolute top-0 start-0 p-0" style="margin-left: -25px;">
+                <i class="bi bi-trash"></i>
+              </button>
             <% end %>
-            <% if message.attachment.attached? && !message.image? %>
-              <div class="mt-2">
-                <a href="<%= url_for(message.attachment) %>" class="<%= message.sender == current_user ? 'text-white' : 'text-dark' %>" target="_blank">
-                  <i class="bi bi-file-earmark"></i> <%= message.attachment.filename %>
-                </a>
-              </div>
-            <% end %>
-            <small class="d-block text-muted">
-              <%= message_time_format(message.created_at) %>
-            </small>
+            <div class="<%= message.sender == current_user ? 'bg-primary text-white' : 'bg-light' %> d-inline-block p-2 rounded-3 message-content">
+              <% if message.body.present? %>
+                <div class="mb-2"><%= message.body %></div>
+              <% end %>
+              <% if message.attachment.attached? && !message.image? %>
+                <div class="mt-2">
+                  <a href="<%= url_for(message.attachment) %>" class="<%= message.sender == current_user ? 'text-white' : 'text-dark' %>" target="_blank">
+                    <i class="bi bi-file-earmark"></i> <%= message.attachment.filename %>
+                  </a>
+                </div>
+              <% end %>
+              <small class="d-block text-muted">
+                <%= message_time_format(message.created_at) %>
+              </small>
+            </div>
           </div>
         <% end %>
       </div>
@@ -119,16 +136,23 @@ window.handleFileSelect = function(e) {
   }
 };
 
+// Remove existing event listeners before adding new ones
+document.querySelectorAll('.message-form').forEach(form => {
+  form.replaceWith(form.cloneNode(true));
+});
+document.removeEventListener('keydown', window.messageKeydownHandler);
+
 // Update file input event listener
-document.querySelector('#message-form-<%= @other_user.id %> input[type="file"]')
-  .addEventListener('change', window.handleFileSelect);
+const fileInput = document.querySelector('#message-form-<%= @other_user.id %> input[type="file"]');
+if (fileInput) {
+  fileInput.addEventListener('change', window.handleFileSelect);
+}
 
 // Add keydown event listener to document
-document.addEventListener('keydown', function(e) {
+window.messageKeydownHandler = function(e) {
   const messageForm = document.querySelector('#message-form-<%= @other_user.id %>');
   if (!messageForm) return;
 
-  // Check if the active element is not a textarea or contenteditable div
   if (e.key === 'Enter' && 
       !e.shiftKey && 
       !(document.activeElement.tagName === 'TEXTAREA' || 
@@ -136,57 +160,140 @@ document.addEventListener('keydown', function(e) {
     e.preventDefault();
     messageForm.dispatchEvent(new Event('submit'));
   }
-});
+};
+document.addEventListener('keydown', window.messageKeydownHandler);
 
 // Update form submission
 const messageForm = document.querySelector('#message-form-<%= @other_user.id %>');
-messageForm.addEventListener('submit', function(e) {
-  e.preventDefault();
-  
-  const formData = new FormData(this);
-  const submitButton = this.querySelector('input[type="submit"]');
-  const fileInput = this.querySelector('input[type="file"]');
-  const messageInput = this.querySelector('.message-input');
-  
-  // Validate form before submission
-  if (!fileInput.files.length && !messageInput.value.trim()) {
-    alert('Please enter a message or attach a file');
-    return;
-  }
-
-  // Ensure file is included in formData if selected
-  if (fileInput.files.length > 0) {
-    formData.set('message[attachment]', fileInput.files[0]);
-  }
-
-  submitButton.disabled = true;
-  
-  fetch(this.action, {
-    method: 'POST',
-    body: formData,
-    headers: {
-      'X-Requested-With': 'XMLHttpRequest',
-      'Accept': 'text/javascript'
-      // Remove Content-Type header to let browser set it with boundary for multipart/form-data
-    },
-    credentials: 'same-origin'
-  })
-  .then(response => response.text())
-  .then(html => {
-    submitButton.disabled = false;
-    if (html.includes('alert')) {
-      eval(html);
-    } else {
-      eval(html);
-      removeFilePreview();
-      messageInput.value = '';
-      messageInput.focus();
+if (messageForm) {
+  messageForm.addEventListener('submit', function(e) {
+    e.preventDefault();
+    if (this.dataset.submitting === 'true') return; // Prevent double submission
+    this.dataset.submitting = 'true';
+    
+    const formData = new FormData(this);
+    const submitButton = this.querySelector('input[type="submit"]');
+    const fileInput = this.querySelector('input[type="file"]');
+    const messageInput = this.querySelector('.message-input');
+    
+    // Validate form before submission
+    if (!fileInput.files.length && !messageInput.value.trim()) {
+      alert('Please enter a message or attach a file');
+      this.dataset.submitting = 'false';
+      return;
     }
-  })
-  .catch(error => {
-    submitButton.disabled = false;
-    console.error('Error:', error);
+
+    // Ensure file is included in formData if selected
+    if (fileInput.files.length > 0) {
+      formData.set('message[attachment]', fileInput.files[0]);
+    }
+
+    submitButton.disabled = true;
+    
+    fetch(this.action, {
+      method: 'POST',
+      body: formData,
+      headers: {
+        'X-Requested-With': 'XMLHttpRequest',
+        'Accept': 'text/javascript'
+      },
+      credentials: 'same-origin'
+    })
+    .then(response => response.text())
+    .then(html => {
+      submitButton.disabled = false;
+      this.dataset.submitting = 'false';
+      if (html.includes('alert')) {
+        eval(html);
+      } else {
+        eval(html);
+        removeFilePreview();
+        messageInput.value = '';
+        messageInput.focus();
+      }
+    })
+    .catch(error => {
+      submitButton.disabled = false;
+      this.dataset.submitting = 'false';
+      console.error('Error:', error);
+    });
   });
+}
+
+// Add message deletion function
+window.deleteMessage = function(messageId) {
+  removeContextMenu();
+  if (confirm('Are you sure you want to delete this message?')) {
+    fetch(`/messages/${messageId}/delete`, {
+      method: 'DELETE',
+      headers: {
+        'X-Requested-With': 'XMLHttpRequest',
+        'X-CSRF-Token': document.querySelector('meta[name="csrf-token"]').content,
+        'Accept': 'text/javascript'
+      },
+      credentials: 'same-origin'
+    })
+    .then(response => response.text())
+    .then(html => {
+      if (html.includes('alert')) {
+        eval(html);
+      } else {
+        document.querySelector(`#message-${messageId}`).remove();
+      }
+    })
+    .catch(error => console.error('Error:', error));
+  }
+};
+
+// Add context menu handling
+window.handleContextMenu = function(event, messageId, isOwner) {
+  event.preventDefault();
+  
+  // Remove any existing context menus
+  removeContextMenu();
+  
+  if (!isOwner) return; // Only show menu for own messages
+  
+  const contextMenu = document.createElement('div');
+  contextMenu.className = 'context-menu';
+  contextMenu.id = 'context-menu';
+  contextMenu.innerHTML = `
+    <div class="context-menu-item delete" onclick="deleteMessage(${messageId})">
+      <i class="bi bi-trash"></i>
+      Delete Message
+    </div>
+  `;
+  
+  document.body.appendChild(contextMenu);
+  
+  // Position the menu
+  const x = event.clientX;
+  const y = event.clientY;
+  
+  // Adjust menu position if it would go off screen
+  const menuWidth = 150; // Approximate width
+  const menuHeight = 40; // Approximate height
+  
+  contextMenu.style.left = (x + menuWidth > window.innerWidth) 
+    ? `${window.innerWidth - menuWidth}px` 
+    : `${x}px`;
+  
+  contextMenu.style.top = (y + menuHeight > window.innerHeight) 
+    ? `${window.innerHeight - menuHeight}px` 
+    : `${y}px`;
+};
+
+// Remove context menu when clicking elsewhere
+document.addEventListener('click', removeContextMenu);
+document.addEventListener('contextmenu', function(e) {
+  if (!e.target.closest('.message')) {
+    removeContextMenu();
+  }
 });
+
+function removeContextMenu() {
+  const menu = document.getElementById('context-menu');
+  if (menu) menu.remove();
+}
 
 document.querySelector('.messages-container').scrollTop = document.querySelector('.messages-container').scrollHeight;
