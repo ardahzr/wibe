@@ -48,6 +48,23 @@ class MessagesController < ApplicationController
     end
   end
 
+  def delete
+    @message = Message.find(params[:id])
+    
+    if @message.sender == current_user
+      @message.destroy
+      respond_to do |format|
+        format.html { redirect_to messages_path }
+        format.js
+      end
+    else
+      respond_to do |format|
+        format.html { redirect_to messages_path, alert: 'You can only delete your own messages.' }
+        format.js { render js: "alert('You can only delete your own messages.');" }
+      end
+    end
+  end
+
   private
 
   def message_params

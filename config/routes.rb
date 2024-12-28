@@ -1,5 +1,7 @@
 Rails.application.routes.draw do
-  resources :messages
+  resources :messages do
+    delete :delete, on: :member
+  end
   resources :friendships, only: [:create, :update, :destroy]
   devise_for :users
   resources :posts
