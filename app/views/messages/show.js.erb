@@ -11,43 +11,29 @@ document.getElementById('conversation').innerHTML = `
            oncontextmenu="handleContextMenu(event, <%= message.id %>, <%= message.sender == current_user %>); return false;">
         <% if message.image? %>
           <div class="d-flex flex-column <%= message.sender == current_user ? 'align-items-end' : '' %>">
-            <div class="position-relative">
-              <% if message.sender == current_user %>
-                <button onclick="deleteMessage(<%= message.id %>)" class="btn btn-sm btn-link text-danger position-absolute top-0 start-0 p-0" style="margin-left: -25px;">
-                  <i class="bi bi-trash"></i>
-                </button>
-              <% end %>
-              <% if message.body.present? %>
-                <div class="<%= message.sender == current_user ? 'bg-primary text-white' : 'bg-light' %> d-inline-block p-2 rounded-3 mb-2 message-content">
-                  <%= message.body %>
-                </div>
-              <% end %>
-              <%= image_tag(url_for(message.attachment), class: 'img-fluid rounded message-image', style: 'max-width: 300px') %>
-              <div class="text-muted small mt-1"><%= message_time_format(message.created_at) %></div>
-            </div>
+            <% if message.body.present? %>
+              <div class="<%= message.sender == current_user ? 'bg-primary text-white' : 'bg-light' %> d-inline-block p-2 rounded-3 message-content">
+                <%= message.body %>
+              </div>
+            <% end %>
+            <%= image_tag(url_for(message.attachment), class: 'img-fluid rounded message-image', style: 'max-width: 300px') %>
+            <div class="text-muted small"><%= message_time_format(message.created_at) %></div>
           </div>
         <% else %>
-          <div class="position-relative">
-            <% if message.sender == current_user %>
-              <button onclick="deleteMessage(<%= message.id %>)" class="btn btn-sm btn-link text-danger position-absolute top-0 start-0 p-0" style="margin-left: -25px;">
-                <i class="bi bi-trash"></i>
-              </button>
+          <div class="<%= message.sender == current_user ? 'bg-primary text-white' : 'bg-light' %> d-inline-block p-2 rounded-3 message-content">
+            <% if message.body.present? %>
+              <div class="mb-2"><%= message.body %></div>
             <% end %>
-            <div class="<%= message.sender == current_user ? 'bg-primary text-white' : 'bg-light' %> d-inline-block p-2 rounded-3 message-content">
-              <% if message.body.present? %>
-                <div class="mb-2"><%= message.body %></div>
-              <% end %>
-              <% if message.attachment.attached? && !message.image? %>
-                <div class="mt-2">
-                  <a href="<%= url_for(message.attachment) %>" class="<%= message.sender == current_user ? 'text-white' : 'text-dark' %>" target="_blank">
-                    <i class="bi bi-file-earmark"></i> <%= message.attachment.filename %>
-                  </a>
-                </div>
-              <% end %>
-              <small class="d-block text-muted">
-                <%= message_time_format(message.created_at) %>
-              </small>
-            </div>
+            <% if message.attachment.attached? && !message.image? %>
+              <div class="mt-2">
+                <a href="<%= url_for(message.attachment) %>" class="<%= message.sender == current_user ? 'text-white' : 'text-dark' %>" target="_blank">
+                  <i class="bi bi-file-earmark"></i> <%= message.attachment.filename %>
+                </a>
+              </div>
+            <% end %>
+            <small class="d-block text-muted">
+              <%= message_time_format(message.created_at) %>
+            </small>
           </div>
         <% end %>
       </div>
@@ -59,6 +45,9 @@ document.getElementById('conversation').innerHTML = `
       <div class="input-group">
         <%= f.hidden_field :receiver_id, value: @other_user.id %>
         <%= f.text_field :body, class: "form-control message-input", placeholder: "Type a message...", autocomplete: 'off' %>
+        <button type="button" class="btn btn-outline-secondary d-flex align-items-center emoji-picker-button">
+          <i class="bi bi-emoji-smile fs-5"></i>
+        </button>
         <label class="btn btn-outline-secondary d-flex align-items-center">
           <i class="bi bi-paperclip fs-5"></i>
           <%= f.file_field :attachment, class: 'd-none', accept: 'image/*,application/pdf,.doc,.docx,.xls,.xlsx' %>
@@ -138,7 +127,8 @@ window.handleFileSelect = function(e) {
 
 // Remove existing event listeners before adding new ones
 document.querySelectorAll('.message-form').forEach(form => {
-  form.replaceWith(form.cloneNode(true));
+  const newForm = form.cloneNode(true);
+  form.parentNode.replaceChild(newForm, form);
 });
 document.removeEventListener('keydown', window.messageKeydownHandler);
 
@@ -199,23 +189,31 @@ if (messageForm) {
       },
       credentials: 'same-origin'
     })
-    .then(response => response.text())
+    .then(response => {
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      return response.text();
+    })
     .then(html => {
       submitButton.disabled = false;
       this.dataset.submitting = 'false';
-      if (html.includes('alert')) {
-        eval(html);
-      } else {
-        eval(html);
+      try {
+        if (html.trim()) {
+          eval(html);
+        }
         removeFilePreview();
         messageInput.value = '';
         messageInput.focus();
+      } catch (error) {
+        console.error('Error processing response:', error);
       }
     })
     .catch(error => {
+      console.error('Error:', error);
       submitButton.disabled = false;
       this.dataset.submitting = 'false';
-      console.error('Error:', error);
+      alert('An error occurred while sending the message');
     });
   });
 }
@@ -223,31 +221,74 @@ if (messageForm) {
 // Add message deletion function
 window.deleteMessage = function(messageId) {
   removeContextMenu();
-  if (confirm('Are you sure you want to delete this message?')) {
-    fetch(`/messages/${messageId}/delete`, {
-      method: 'DELETE',
-      headers: {
-        'X-Requested-With': 'XMLHttpRequest',
-        'X-CSRF-Token': document.querySelector('meta[name="csrf-token"]').content,
-        'Accept': 'text/javascript'
-      },
-      credentials: 'same-origin'
-    })
-    .then(response => response.text())
-    .then(html => {
-      if (html.includes('alert')) {
+  
+  const backdrop = document.createElement('div');
+  backdrop.className = 'modal-confirm-backdrop';
+  
+  const modal = document.createElement('div');
+  modal.className = 'modal-confirm';
+  modal.innerHTML = `
+    <div class="modal-confirm-title">Delete Message</div>
+    <div>Are you sure you want to delete this message?</div>
+    <div class="modal-confirm-buttons">
+      <button class="btn btn-secondary" onclick="this.closest('.modal-confirm-backdrop').remove()">Cancel</button>
+      <button class="btn btn-danger" onclick="confirmDelete(${messageId}, this)">Delete</button>
+    </div>
+  `;
+  
+  backdrop.appendChild(modal);
+  document.body.appendChild(backdrop);
+  
+  backdrop.addEventListener('click', function(e) {
+    if (e.target === backdrop) {
+      backdrop.remove();
+    }
+  });
+};
+
+window.confirmDelete = function(messageId, button) {
+  button.disabled = true;
+  fetch(`/messages/${messageId}/delete`, {
+    method: 'DELETE',
+    headers: {
+      'X-Requested-With': 'XMLHttpRequest',
+      'X-CSRF-Token': document.querySelector('meta[name="csrf-token"]').content,
+      'Content-Type': 'application/javascript',
+      'Accept': 'text/javascript'
+    },
+    credentials: 'same-origin'
+  })
+  .then(response => {
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    return response.text();
+  })
+  .then(html => {
+    button.closest('.modal-confirm-backdrop').remove();
+    try {
+      if (html.trim()) {
         eval(html);
-      } else {
-        document.querySelector(`#message-${messageId}`).remove();
       }
-    })
-    .catch(error => console.error('Error:', error));
-  }
+    } catch (error) {
+      console.error('Error evaluating response:', error);
+      location.reload();
+    }
+  })
+  .catch(error => {
+    console.error('Error:', error);
+    button.disabled = false;
+    alert('An error occurred while deleting the message');
+  });
 };
 
 // Add context menu handling
 window.handleContextMenu = function(event, messageId, isOwner) {
   event.preventDefault();
+  
+  // Check if click is within message content
+  const messageContent = event.target.closest('.message-content, .message-image');
+  if (!messageContent) return;
   
   // Remove any existing context menus
   removeContextMenu();
@@ -297,3 +338,74 @@ function removeContextMenu() {
 }
 
 document.querySelector('.messages-container').scrollTop = document.querySelector('.messages-container').scrollHeight;
+
+// Replace the emoji picker initialization code with this:
+function initializeEmojiPicker() {
+  const button = document.querySelector('.emoji-picker-button');
+  const messageInput = document.querySelector('.message-input');
+  const container = document.querySelector('.messages-container');
+  
+  if (!button || !messageInput || !container) return;
+  
+  let picker = null;
+  let pickerDiv = document.getElementById('emoji-picker');
+  
+  if (!pickerDiv) {
+    pickerDiv = document.createElement('div');
+    pickerDiv.id = 'emoji-picker';
+    container.appendChild(pickerDiv);
+  }
+  
+  button.addEventListener('click', (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    
+    try {
+      if (!picker && window.createEmojiPicker) {
+        picker = window.createEmojiPicker({
+          rootElement: pickerDiv,
+          showPreview: true,
+          showRecents: true,
+          showSearch: true,
+          showCategoryTabs: true,
+          emojiSize: '24px',
+          emojisPerRow: 8,
+          visibleRows: 6,
+          categories: [
+            'recents',
+            'smileys-emotion',
+            'people-body',
+            'animals-nature',
+            'food-drink',
+            'activities',
+            'travel-places',
+            'objects',
+            'symbols',
+            'flags'
+          ],
+          style: 'native'
+        });
+
+        picker.addEventListener('emoji:select', selection => {
+          messageInput.value += selection.emoji;
+          messageInput.focus();
+          pickerDiv.style.display = 'none';
+        });
+      }
+
+      pickerDiv.style.display = pickerDiv.style.display === 'none' || !pickerDiv.style.display ? 'block' : 'none';
+    } catch (error) {
+      console.error('Error initializing emoji picker:', error);
+    }
+  });
+
+  // Handle clicks outside the picker
+  document.addEventListener('click', (e) => {
+    if (pickerDiv && !button.contains(e.target) && !pickerDiv.contains(e.target)) {
+      pickerDiv.style.display = 'none';
+    }
+  });
+}
+
+// Initialize emoji picker
+initializeEmojiPicker();
