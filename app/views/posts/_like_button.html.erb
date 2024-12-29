@@ -1,0 +1,5 @@
+<% if post.liked_by?(current_user) %>
+  <%= button_to 'Unlike', unlike_post_path(post), method: :delete, remote: true, class: 'btn btn-sm btn-danger' %>
+<% else %>
+  <%= button_to 'Like', like_post_path(post), method: :post, remote: true, class: 'btn btn-sm btn-primary' %>
+<% end %>

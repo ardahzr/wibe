@@ -7,6 +7,9 @@ class User < ApplicationRecord
   has_many :received_messages, class_name: 'Message', foreign_key: 'receiver_id'
   
   has_many :posts, dependent: :destroy
+
+  has_many :posts
+  has_many :likes
   
   has_many :friendships
   has_many :friends, through: :friendships, source: :friend
