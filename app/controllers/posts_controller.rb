@@ -4,7 +4,7 @@ require 'json'
 
 class PostsController < ApplicationController
   before_action :authenticate_user!, except: [:index, :show]
-  before_action :set_post, only: [:edit, :update, :destroy]
+  before_action :set_post, only: [:edit, :update, :destroy, :like, :unlike]
   before_action :authorize_user!, only: [:edit, :update, :destroy]
 
   def index
@@ -47,6 +47,31 @@ class PostsController < ApplicationController
   def destroy
     @post.destroy
     redirect_to posts_path, notice: 'Post was successfully deleted.'
+  end
+
+  before_action :find_post, only: [:like, :unlike]
+
+  def like
+    @post.likes.create(user: current_user)
+    respond_to do |format|
+      format.js   
+      format.html { redirect_to posts_path } 
+    end
+  end
+
+  def unlike
+    like = @post.likes.find_by(user: current_user)
+    like.destroy if like
+    respond_to do |format|
+      format.js   
+      format.html { redirect_to posts_path } 
+    end
+  end
+
+  private
+
+  def find_post
+    @post = Post.find(params[:id])
   end
 
   private

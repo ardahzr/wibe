@@ -1,8 +1,13 @@
 class Post < ApplicationRecord
   belongs_to :user
   has_many_attached :media
+  has_many :likes, dependent: :destroy  # Adding the association
   validates :title, presence: true
   validate :content_or_media_present
+
+  def liked_by?(user)
+    likes.exists?(user: user)
+  end
 
   private
 
