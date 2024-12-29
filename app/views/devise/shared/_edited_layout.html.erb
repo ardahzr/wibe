@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title><%= content_for(:title) || "Wibe" %></title>
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="mobile-web-app-capable" content="yes">
+    <%= csrf_meta_tags %>
+    <%= csp_meta_tag %>
+
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap JS Bundle -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  </head>
+  <body>
+    <div class="container-fluid" style="background: linear-gradient(135deg, #5941ff, #41d1ff);">
+      <div class="row min-vh-100">
+        <% if content_for?(:show_branding) %>
+          <!-- Left Side: Branding -->
+          <div class="col-md-6 d-flex align-items-center justify-content-center">
+            <div class="text-white p-5">
+              <% if content_for?(:welcome_message) %>
+                <h1 class="display-3 fw-bold mb-4"><%= yield :welcome_message %></h1>
+              <% else %>
+                <h1 class="display-3 fw-bold mb-4">Welcome to Wibe</h1>
+              <% end %>
+              <p class="lead mb-4">Connect with friends and share your moments with the world.</p>
+            </div>
+          </div>
+        <% end %>
+        
+        <!-- Right Side: Auth Form -->
+        <div class="<%= content_for?(:show_branding) ? 'col-md-6' : 'col-md-12' %> d-flex align-items-center justify-content-center">
+          <div style="background-color: rgba(255, 255, 255, 0.9); width: 100%; max-width: 500px;">
+            <%= yield %>
+          </div>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>
