@@ -16,9 +16,9 @@ body, html {
 
 .message {
   margin-bottom: 10px;
-  max-width: 80%; /* Add max-width to messages */
-  word-wrap: break-word; /* Allow word breaking */
-  user-select: none; /* Prevent text selection when right-clicking */
+  max-width: 80%;
+  word-wrap: break-word;
+  user-select: none;
 }
 
 .message strong {
@@ -97,7 +97,6 @@ body, html {
   margin-top: 4px;
 }
 
-/* Add styles for message content */
 .message-content {
   overflow-wrap: break-word;
   word-wrap: break-word;
@@ -107,7 +106,7 @@ body, html {
 }
 
 .message-content, .message-image {
-  cursor: context-menu; /* Show context menu cursor only on clickable areas */
+  cursor: context-menu;
 }
 
 .message .d-flex.flex-column .message-content {
@@ -137,7 +136,7 @@ body, html {
 }
 
 .messages-container {
-  overflow-x: hidden !important; /* Prevent horizontal scroll */
+  overflow-x: hidden !important;
 }
 
 .context-menu {
@@ -208,39 +207,9 @@ body, html {
   border: 1px solid rgba(0, 0, 0, 0.1) !important;
   border-radius: 8px !important;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1) !important;
-  width: 100% !important;
-  height: 100% !important;
-  overflow: hidden !important;
-}
-
-.popup-picker {
-  position: fixed !important;
-  bottom: 80px !important;
-  right: 20px !important;
-  z-index: 9999 !important;
-  background: white !important;
-  border: 1px solid rgba(0, 0, 0, 0.1) !important;
-  border-radius: 8px !important;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1) !important;
-  max-width: 350px !important;
-}
-
-.emoji-picker__wrapper {
-  max-height: 350px !important;
-}
-
-.custom-picker {
-  --border-radius: 8px;
-  --ui-font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-  --category-icon-size: 18px;
-  --font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-  --category-font-size: 0.9rem;
-  --emoji-font-size: 1.25rem;
-  --category-tab-gap: 4px;
-  --emoji-size: 1.5rem;
-  --input-border-radius: 8px;
-  --input-font-size: 1rem;
-  --input-padding: 0.5rem;
+  width: 312px !important;
+  min-width: 0 !important;
+  height: auto !important;
 }
 
 .custom-picker .picker {
@@ -260,52 +229,30 @@ body, html {
   border: 1px solid rgba(0,0,0,.1);
   border-radius: 8px;
   box-shadow: 0 2px 8px rgba(0,0,0,.15);
-  width: 320px; /* Adjusted width */
-  max-height: 400px;
+  width: 293px;
 }
 
-.picmo__picker {
+.picmo__content {
   width: 100% !important;
-  height: 100% !important;
+  min-width: 0 !important;
 }
 
 .picmo__emojiArea {
+  width: 100% !important;
+  padding: 5px !important;
   grid-template-columns: repeat(8, 1fr) !important;
-  padding: 8px !important;
-  gap: 4px !important;
+  gap: 3px !important;
 }
 
 .picmo__categoryButtons {
   display: flex !important;
   overflow-x: auto !important;
-  padding: 4px 8px !important;
-}
-
-.picmo__picker .picmo__content {
-  width: 100% !important;
-}
-
-.picmo__categoryContent {
-  width: 100% !important;
-  grid-template-columns: repeat(8, 1fr) !important;
-}
-
-.picmo__picker .picmo__emojiArea {
-  grid-template-columns: repeat(8, 1fr) !important;
-  grid-gap: 5px !important;
-  padding: 10px !important;
-  width: 100% !important;
-  overflow-x: hidden !important;
+  padding: 4px !important;
 }
 
 .picmo__search {
-  width: calc(100% - 20px) !important;
-  margin: 10px !important;
-}
-
-.picmo__categoryContent {
-  width: 100% !important;
-  grid-template-columns: repeat(8, 1fr) !important;
+  width: calc(100% - 10px) !important;
+  margin: 5px !important;
 }
 
 .chat-input {

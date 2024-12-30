@@ -11,7 +11,7 @@ var newMessage = `
       <div class="text-muted small"><%= message_time_format(@message.created_at) %></div>
     </div>
   <% else %>
-    <div class="bg-primary text-white d-inline-block p-2 rounded-3">
+    <div class="bg-primary text-white d-inline-block p-2 rounded-3 message-content">
       <% if @message.body.present? %>
         <div class="mb-2"><%= j @message.body %></div>
       <% end %>
@@ -27,15 +27,22 @@ var newMessage = `
   <% end %>
 `;
 
-messagesContainer.insertAdjacentHTML('beforeend', `
-  <div class="message text-end mb-3" 
-       id="message-<%= @message.id %>"
-       data-owner="true"
-       oncontextmenu="handleContextMenu(event, <%= @message.id %>, true); return false;">
-    ${newMessage}
-  </div>
-`);
+// Create message element
+const messageElement = document.createElement('div');
+messageElement.className = 'message text-end mb-3';
+messageElement.id = 'message-<%= @message.id %>';
+messageElement.dataset.owner = 'true';
+messageElement.innerHTML = newMessage;
 
+// Add context menu event listener
+messageElement.addEventListener('contextmenu', function(event) {
+  event.preventDefault();
+  handleContextMenu(event, <%= @message.id %>, true);
+  return false;
+});
+
+// Add the message to container
+messagesContainer.appendChild(messageElement);
 messagesContainer.scrollTop = messagesContainer.scrollHeight;
 
 // Update sidebar last message

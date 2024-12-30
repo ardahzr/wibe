@@ -1,0 +1,39 @@
+(function() {
+  // Remove the message from the conversation
+  const messageElement = document.querySelector('#message-<%= @message.id %>');
+  if (messageElement) {
+    messageElement.remove();
+  }
+
+  // Update the sidebar item
+  const sidebarItem = document.querySelector('a[href="/messages/<%= @other_user.id %>"]');
+  if (sidebarItem) {
+    const lastMessageElement = sidebarItem.querySelector('small.text-muted');
+    if (lastMessageElement) {
+      <% if @last_message %>
+        lastMessageElement.innerHTML = `
+          <%= j(
+            if @last_message.sender == current_user
+              "You: "
+            else
+              "#{@last_message.sender.username}: "
+            end +
+            if @last_message.attachment.attached?
+              if @last_message.image?
+                "Sent an image"
+              else
+                "Sent a file: #{@last_message.attachment.filename.to_s.truncate(20)}"
+              end +
+              (@last_message.body.present? ? " • #{@last_message.body.truncate(20)}" : "")
+            else
+              @last_message.body.truncate(30)
+            end +
+            " • #{message_time_format(@last_message.created_at)}"
+          ) %>
+        `;
+      <% else %>
+        lastMessageElement.textContent = 'Start a conversation';
+      <% end %>
+    }
+  }
+})();
