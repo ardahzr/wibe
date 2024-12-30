@@ -1,0 +1,65 @@
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+<div class="container-fluid" style="background: linear-gradient(135deg, #5941ff, #41d1ff); min-height: 100vh;">
+  <div class="container py-5">
+    <div class="row justify-content-center">
+      <div class="col-md-8">
+        <div class="card shadow-lg" style="background-color: rgba(255, 255, 255, 0.9);">
+          <div class="card-header bg-primary text-white">
+            <h1 class="card-title mb-0"><%= @post.title %></h1>
+          </div>
+          <div class="card-body">
+            <p class="card-text"><%= @post.content %></p>
+
+            <% if @post.media.attached? %>
+              <div class="media-container mt-3">
+                <% @post.media.each do |medium| %>
+                  <% if medium.blob.content_type.start_with?('image/') %>
+                    <%= image_tag medium, class: "img-fluid rounded mb-3" %>
+                  <% elsif medium.blob.content_type.start_with?('video/') %>
+                    <%= video_tag url_for(medium), controls: true, class: "img-fluid rounded mb-3" %>
+                  <% end %>
+                <% end %>
+              </div>
+            <% end %>
+
+            <div id="like-actions-<%= @post.id %>">
+              <% if @post.liked_by?(current_user) %>
+                <%= button_to 'Unlike', unlike_post_path(@post), method: :delete, remote: true, class: 'btn btn-sm btn-danger' %>
+              <% else %>
+                <%= button_to 'Like', like_post_path(@post), method: :post, remote: true, class: 'btn btn-sm btn-primary' %>
+              <% end %>
+            </div>
+            <p id="like-count-<%= @post.id %>"><%= @post.likes.count %> Likes</p>
+
+            <!-- Comments Section -->
+            <div class="comments mt-3">
+              <h6>Comments:</h6>
+              <%= render @post.comments %>
+              <%= render 'comments/form', post: @post %>
+            </div>
+          </div>
+          <div class="card-footer text-end">
+            <%= link_to 'Back to Profile', profile_path, class: 'btn btn-outline-light' %>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+.media-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1rem;
+}
+
+.media-container img,
+.media-container video {
+  width: 100%;
+  height: auto;
+  object-fit: contain;
+}
+</style>

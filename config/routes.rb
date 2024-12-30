@@ -17,5 +17,6 @@ Rails.application.routes.draw do
   resources :users, only: [:index, :show, :edit, :update]
 
   get 'profile', to: 'accounts#show', as: :profile
+  get 'profile/posts/:id', to: 'accounts#show_post', as: :profile_post
   root to: 'home#index'
 end

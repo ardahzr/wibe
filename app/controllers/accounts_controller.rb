@@ -1,8 +1,9 @@
 class AccountsController < ApplicationController
-    before_action :authenticate_user!  # Giriş yapmamış kullanıcıları yönlendirir
-  
-    def show
-      @user = current_user  # Giriş yapan kullanıcının bilgilerini alır
-    end
+  def show
+    @user = current_user
   end
-  
+
+  def show_post
+    @post = Post.find(params[:id])
+  end
+end
