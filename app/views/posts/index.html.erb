@@ -90,6 +90,12 @@
                       data: { confirm: 'Are you sure?' } %>
                 </div>
               <% end %>
+              <!-- Comments Section -->
+              <div class="comments mt-3">
+                <h6>Comments:</h6>
+                <%= render post.comments %>
+                <%= render 'comments/form', post: post %>
+              </div>
             </div>
           </div>
         <% end %>
