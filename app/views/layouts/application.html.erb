@@ -38,6 +38,50 @@
   </head>
 
   <body>
+    <% unless (controller_name == 'home' && action_name == 'index') || 
+              (controller_name == 'sessions' && action_name == 'new') || 
+              (controller_name == 'registrations' && action_name == 'new') || 
+              (controller_name == 'passwords' && action_name == 'new') %>
+      <nav class="navbar navbar-expand-lg" style="background-color: #2e92b3;">
+        <div class="container-fluid">
+          <%= link_to 'Wibe', root_path, class: 'navbar-brand text-white' %>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+          </button>
+          <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav ms-auto">
+              <% if user_signed_in? %>
+                <li class="nav-item">
+                  <%= link_to 'Add Friends', users_path, class: 'nav-link text-white' %>
+                </li>
+                <li class="nav-item">
+                  <%= link_to 'Latest Posts', posts_path, class: 'nav-link text-white' %>
+                </li>
+                <li class="nav-item">
+                  <%= link_to 'Direct Messages', messages_path, class: 'nav-link text-white' %>
+                </li>
+                <li class="nav-item">
+                  <%= link_to 'My Profile', profile_path, class: 'nav-link text-white' %>
+                </li>
+                <li class="nav-item">
+                  <%= link_to 'Edit Profile', edit_user_registration_path, class: 'nav-link text-white' %>
+                </li>
+                <li class="nav-item">
+                  <%= button_to 'Logout', destroy_user_session_path, method: :delete, class: 'nav-link btn btn-link text-white', data: { confirm: 'Are you sure?' } %>
+                </li>
+              <% else %>
+                <li class="nav-item">
+                  <%= link_to 'Join Wibe', new_user_registration_path, class: 'nav-link text-white' %>
+                </li>
+                <li class="nav-item">
+                  <%= link_to 'Log in', new_user_session_path, class: 'nav-link text-white' %>
+                </li>
+              <% end %>
+            </ul>
+          </div>
+        </div>
+      </nav>
+    <% end %>
     <%= yield %>
   </body>
 </html>

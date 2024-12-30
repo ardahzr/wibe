@@ -31,23 +31,23 @@
           <div class="d-grid gap-2">
 
             <%= link_to 'Add Friends', users_path, 
-                class: 'btn btn-lg mb-2',
+                class: 'btn btn-lg 1,8',
                 style: 'background-color: #5941ff; color: white;' %>
             <%= link_to 'Latest Posts', posts_path, 
-                class: 'btn btn-lg mb-2',
+                class: 'btn btn-lg 1,8',
                 style: 'background-color: #5941ff; color: white;' %>
             <%= link_to 'Direct Messages', messages_path, 
-                class: 'btn btn-lg btn-outline-primary' %>
+                class: 'btn btn-lg btn-outline-primary 1,8' %>
             <%= link_to 'My Profile', profile_path, 
-                class: 'btn btn-lg mb-2',
+                class: 'btn btn-lg 1,8',
                 style: 'background-color: #2e92b3; color: white;' %>
             <%= link_to 'Edit Profile', edit_user_registration_path, 
-                class: 'btn btn-lg mb-2',
+                class: 'btn btn-lg 1,8',
                 style: 'background-color: #8941ff; color: white;' %>
             <%= button_to 'Logout', 
                 destroy_user_session_path,
                 method: :delete,
-                class: 'btn btn-lg mb-2 w-100',
+                class: 'btn btn-lg 1,8 w-100',
                 style: 'background-color: #dc3545; color: white;',
                 form: { 
                   data: { turbo: false },
@@ -58,7 +58,7 @@
         </div>
       <% else %>
         <div class="text-center">
-          <img src="<%= asset_path('logos/logor.png') %>" alt="Wibe Logo" class="img-fluid" style="max-width: 800px;">
+          <img src="<%= asset_path('logos/logor.png') %>" alt="Wibe Logo" class="img-fluid" style="max-width: 600px;">
         </div>
       <% end %>
     </div>
