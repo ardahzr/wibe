@@ -5,13 +5,7 @@
         <div class="container mt-5">
           <!-- User Info -->
           <div class="d-flex align-items-center mb-4">
-            <% if current_user.avatar.attached? %>
-              <%= image_tag current_user.avatar, class: "rounded-circle me-3", style: "width: 100px; height: 100px; object-fit: cover;" %>
-            <% else %>
-              <div class="rounded-circle bg-secondary me-3" style="width: 100px; height: 100px; display: flex; align-items: center; justify-content: center; color: white;">
-                <span><%= current_user.username[0].upcase %></span>
-              </div>
-            <% end %>
+            <%= image_tag current_user.profile_picture_url, class: "rounded-circle me-3", style: "width: 100px; height: 100px; object-fit: cover;" %>
             <div>
               <h1 class="fw-bold"><%= current_user.username %></h1>
               <p class="text-muted"><%= current_user.status.presence || "No bio provided." %></p>
