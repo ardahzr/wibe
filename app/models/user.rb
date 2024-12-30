@@ -17,6 +17,7 @@ class User < ApplicationRecord
   has_many :received_friends, through: :received_friendships, source: 'user'
   has_many :inverse_friendships, class_name: "Friendship", foreign_key: "friend_id"
   has_many :inverse_friends, through: :inverse_friendships, source: :user
+  has_one_attached :avatar
   
   def friends_with?(user)
     Friendship.where('(user_id = ? AND friend_id = ? AND confirmed = ?) OR (user_id = ? AND friend_id = ? AND confirmed = ?)', 
@@ -50,4 +51,13 @@ class User < ApplicationRecord
   def avatar_url
     self[:avatar_url] || 'default_avatar.png'
   end
+  
+  def profile_picture_url
+    if avatar.attached?
+      Rails.application.routes.url_helpers.rails_blob_url(avatar, only_path: true)
+    else
+      'default_avatar.png'
+    end
+  end
+
 end

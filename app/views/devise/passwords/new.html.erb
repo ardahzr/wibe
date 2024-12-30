@@ -5,7 +5,7 @@
   <% content_for :welcome_message do %>
     Forgot your password?
   <% end %>
-  <div class="p-4" style="background-color: rgba(255, 255, 255, 0.9); width: 100%; max-width: 700px;">
+  <div class="p-4" style="background-color: rgba(255, 255, 255, 0.9); width: 100%; max-width: 700px; border-radius: 10px">
     <h2 class="text-center mb-4" style="color: #3747b3;">Forgot your password?</h2>
     <%= form_for(resource, as: resource_name, url: password_path(resource_name), html: { method: :post }) do |f| %>
       <%= render "devise/shared/reset_password_error", resource: resource %>
