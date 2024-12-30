@@ -230,6 +230,7 @@ window.deleteMessage = function(messageId) {
   modal.innerHTML = `
     <div class="modal-confirm-title">Delete Message</div>
     <div>Are you sure you want to delete this message?</div>
+    <div>This will delete the message permanently and it will not be restored!</div>
     <div class="modal-confirm-buttons">
       <button class="btn btn-secondary" onclick="this.closest('.modal-confirm-backdrop').remove()">Cancel</button>
       <button class="btn btn-danger" onclick="confirmDelete(${messageId}, this)">Delete</button>
@@ -380,14 +381,17 @@ function initializeEmojiPicker() {
             'activities',
             'travel-places',
             'objects',
-            'symbols',
-            'flags'
+            'symbols'
+            // 'flags'
           ],
-          style: 'native'
+          style: 'native',
+          theme: 'light',
+          emojiData: 'https://cdn.jsdelivr.net/npm/@picmo/emoji-data@latest/data/stable.json'
         });
 
         picker.addEventListener('emoji:select', selection => {
-          messageInput.value += selection.emoji;
+          const emoji = selection.emoji;
+          messageInput.value += emoji;
           messageInput.focus();
           pickerDiv.style.display = 'none';
         });
