@@ -8,6 +8,8 @@ class PostsController < ApplicationController
   before_action :authorize_user!, only: [:edit, :update, :destroy]
 
   def index
+    @posts = Post.all
+    @post = Post.new
     friend_ids = current_user.friends.pluck(:id)
     @posts = Post.where(user_id: [current_user.id, *friend_ids]).order(created_at: :desc)
   end
