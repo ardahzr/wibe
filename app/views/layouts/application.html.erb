@@ -35,6 +35,16 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- Bootstrap JS Bundle -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <style>
+      .navbar-logo {
+        height: 40px;
+        width: auto;
+      }
+      .dropdown-item.logout-item {
+        color: red;
+      }
+    </style>
   </head>
 
   <body>
@@ -42,32 +52,34 @@
               (controller_name == 'sessions' && action_name == 'new') || 
               (controller_name == 'registrations' && action_name == 'new') || 
               (controller_name == 'passwords' && action_name == 'new') %>
-      <nav class="navbar navbar-expand-lg" style="background-color: #2e92b3;">
+      <nav class="navbar navbar-expand-lg" style="background: linear-gradient(135deg, #2e92b3, #a700f5);">
         <div class="container-fluid">
-          <%= link_to 'Wibe', root_path, class: 'navbar-brand text-white' %>
+          <%= link_to image_tag('logos/logor.png', alt: 'Wibe Logo', class: 'navbar-brand navbar-logo'), root_path, class: 'text-white' %>
           <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
           </button>
           <div class="collapse navbar-collapse" id="navbarNav">
             <ul class="navbar-nav ms-auto">
               <% if user_signed_in? %>
-                <li class="nav-item">
+                <li class="nav-item" style="align-content: center">
                   <%= link_to 'Add Friends', users_path, class: 'nav-link text-white' %>
                 </li>
-                <li class="nav-item">
+                <li class="nav-item" style="align-content: center">
                   <%= link_to 'Latest Posts', posts_path, class: 'nav-link text-white' %>
                 </li>
-                <li class="nav-item">
+                <li class="nav-item" style="align-content: center">
                   <%= link_to 'Direct Messages', messages_path, class: 'nav-link text-white' %>
                 </li>
-                <li class="nav-item">
-                  <%= link_to 'My Profile', profile_path, class: 'nav-link text-white' %>
-                </li>
-                <li class="nav-item">
-                  <%= link_to 'Edit Profile', edit_user_registration_path, class: 'nav-link text-white' %>
-                </li>
-                <li class="nav-item">
-                  <%= button_to 'Logout', destroy_user_session_path, method: :delete, class: 'nav-link btn btn-link text-white', data: { confirm: 'Are you sure?' } %>
+                <li class="nav-item dropdown">
+                  <a class="nav-link dropdown-toggle text-white d-flex align-items-center" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                    <%= image_tag(current_user.profile_picture_url, alt: 'Profile Picture', class: 'rounded-circle ms-2', style: 'height: 35px; width: 35px;') %>
+                  </a>
+                  <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
+                    <li><%= link_to 'My Profile', profile_path, class: 'dropdown-item' %></li>
+                    <li><%= link_to 'Edit Profile', edit_user_registration_path, class: 'dropdown-item' %></li>
+                    <li><hr class="dropdown-divider"></li>
+                    <li><%= button_to 'Logout', destroy_user_session_path, method: :delete, class: 'dropdown-item logout-item', data: { confirm: 'Are you sure?' } %></li>
+                  </ul>
                 </li>
               <% else %>
                 <li class="nav-item">
